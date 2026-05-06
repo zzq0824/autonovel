@@ -109,7 +109,7 @@ INPUT:  seed.txt (user-provided or generated via seed.py)
 OUTPUT: branch created, .env configured
 
 1. git checkout -b autonovel/<tag>
-2. Verify .env has ANTHROPIC_API_KEY
+2. Verify .env has an LLM API key (ANTHROPIC_API_KEY or OPENAI_API_KEY)
 3. Verify seed.txt exists and is specific enough
    (world-differentiator, central tension, cost/constraint, sensory hook)
 ```

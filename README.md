@@ -195,16 +195,40 @@ loop continues until the reviewer's items are mostly qualified hedges rather tha
 
 ## API Keys
 
-The pipeline uses three external services:
+The pipeline needs one LLM key plus two optional service keys:
 
 | Service | Key | Used for |
 |---------|-----|----------|
-| Anthropic | `ANTHROPIC_API_KEY` | Writing, evaluation, review (Sonnet + Opus) |
+| LLM | `ANTHROPIC_API_KEY` *or* `OPENAI_API_KEY` *or* `AUTONOVEL_API_KEY` | Writing, evaluation, review |
 | fal.ai | `FAL_KEY` | Cover art and ornament generation (Nano Banana 2) |
 | ElevenLabs | `ELEVENLABS_API_KEY` | Multi-voice audiobook generation |
 
-Copy `.env.example` to `.env` and fill in your keys. Only the Anthropic
-key is required for the core pipeline. Art and audiobook are optional.
+Copy `.env.example` to `.env` and fill in your keys. Only the LLM key is
+required for the core pipeline; art and audiobook are optional.
+
+### LLM provider
+
+The LLM client (`llm_client.py`) speaks both Anthropic Messages and OpenAI
+Chat Completions. Pick a provider via `AUTONOVEL_API_BASE_URL`:
+
+| Provider | Base URL |
+|---|---|
+| Anthropic (default) | `https://api.anthropic.com` |
+| OpenAI | `https://api.openai.com/v1` |
+| DeepSeek | `https://api.deepseek.com` |
+| Ollama | `http://localhost:11434/v1` |
+| vLLM / LiteLLM | `http://localhost:8000/v1` |
+
+Provider is auto-detected from the base URL (URLs containing `anthropic`
+use the native Anthropic protocol; everything else uses OpenAI Chat
+Completions). Override with `AUTONOVEL_API_PROVIDER=anthropic|openai` if
+needed. Set `AUTONOVEL_WRITER_MODEL` / `AUTONOVEL_JUDGE_MODEL` /
+`AUTONOVEL_REVIEW_MODEL` to model IDs your provider serves.
+
+The 1M-context flag (`anthropic-beta: context-1m-2025-08-07`) is only
+sent in Anthropic mode — it silently no-ops elsewhere, so when running
+against an OpenAI-compatible endpoint pick a model with enough native
+context (chapter drafting and full-novel review can need 100k+ tokens).
 
 ---
 
