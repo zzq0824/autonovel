@@ -32,11 +32,6 @@ load_dotenv(BASE_DIR / ".env")
 # Judge uses Opus 4.6 (harsh, critical). Writer uses Sonnet 4.6 (fast, long context).
 # Intentionally different to avoid self-congratulation.
 JUDGE_MODEL = os.environ.get("AUTONOVEL_JUDGE_MODEL", "claude-opus-4-6")
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-API_BASE_URL = os.environ.get("AUTONOVEL_API_BASE_URL", "https://api.anthropic.com")
-
-# Beta header to unlock 1M context window on both Opus 4.6 and Sonnet 4.6
-ANTHROPIC_BETA = "context-1m-2025-08-07"
 CHAPTERS_DIR = BASE_DIR / "chapters"
 EVAL_LOG_DIR = BASE_DIR / "eval_logs"
 EVAL_LOG_DIR.mkdir(exist_ok=True)
@@ -273,35 +268,19 @@ def load_all_chapters():
 
 
 def call_judge(prompt, max_tokens=2000):
-    """Call the Anthropic judge LLM and return its response text."""
-    import httpx
-
-    headers = {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-beta": ANTHROPIC_BETA,
-        "content-type": "application/json",
-    }
-    payload = {
-        "model": JUDGE_MODEL,
-        "max_tokens": max_tokens,
-        "temperature": 0.3,
-        "system": "You are a literary critic and novel editor. "
-                  "You evaluate fiction with precision. Always respond with valid JSON. "
-                  "No markdown fences, no preamble -- just the JSON object.",
-        "messages": [
-            {"role": "user", "content": prompt},
-        ],
-    }
-
-    resp = httpx.post(
-        f"{API_BASE_URL}/v1/messages",
-        headers=headers,
-        json=payload,
+    """Call the configured judge LLM and return its response text."""
+    import llm_client
+    return llm_client.call(
+        prompt,
+        model=JUDGE_MODEL,
+        max_tokens=max_tokens,
+        temperature=0.3,
+        system="You are a literary critic and novel editor. "
+               "You evaluate fiction with precision. Always respond with valid JSON. "
+               "No markdown fences, no preamble -- just the JSON object.",
         timeout=180,
+        extra_beta=True,
     )
-    resp.raise_for_status()
-    return resp.json()["content"][0]["text"]
 
 
 def parse_json_response(text):
