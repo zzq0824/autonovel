@@ -1,72 +1,18 @@
 {
+  "_README": "把这些示例 key 替换为本部小说实际的人物（来自 characters.md）。speaker key 需用 ASCII（如 CASS、EDDAN），因为它们会被用作 JSON key 与文件名片段。voice_id 请到 ElevenLabs Voice Library 选 language: zh 的实际 ID。description 字段用于供 LLM 解析对话时识别说话人语气。",
   "NARRATOR": {
     "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "George \u2014 Warm, Captivating Storyteller. British, middle-aged. Perfect for literary narration.",
-    "why": "narrative_story use case, warm and measured, the novel's register"
+    "description": "叙述者声音 —— 温暖、平稳、精准。以本书世界的节奏读散文。",
+    "why": "narrative_story 用例。中年男声 / 女声皆可。"
   },
-  "CASS": {
+  "MAIN_PROTAGONIST": {
     "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Liam \u2014 young male. Energetic but can be restrained.",
-    "why": "youngest male voice available. 14-year-old protagonist."
-  },
-  "EDDAN": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Brian \u2014 Deep, Resonant and Comforting. Middle-aged.",
-    "why": "deep and resonant matches the bellwright patriarch. The comfort is right for workshop scenes."
-  },
-  "PERIN": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Daniel \u2014 Steady Broadcaster. British, middle-aged.",
-    "why": "steady and measured. Perin is precise, dry, controlled after 10 years of Corda service."
-  },
-  "LENNE": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Jessica \u2014 Playful, Bright, Warm. Young female.",
-    "why": "bright and quick matches Lenne's intellectual energy. Young voice."
-  },
-  "TORVALD": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Bill \u2014 Wise, Mature, Balanced. Old male.",
-    "why": "old, wise \u2014 the 63-year-old dye merchant. Gravelly warmth."
-  },
-  "MARET": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Lily \u2014 Velvety Actress. British, middle-aged female.",
-    "why": "controlled, precise, powerful presence. Maret's stillness."
-  },
-  "DAV_SORN": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Eric \u2014 Smooth, Trustworthy. Middle-aged male.",
-    "why": "formal trained voice for the Court Singer. Smooth but can be clipped."
-  },
-  "PROCTOR_FEN": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Roger \u2014 Laid-Back, Casual, Resonant. Middle-aged male.",
-    "why": "dry, archly amused pedagogue. The casual resonance fits."
-  },
-  "FERREN": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Chris \u2014 Charming, Down-to-Earth. Middle-aged male.",
-    "why": "clinical, professional acoustician. Down-to-earth delivery."
-  },
-  "MIRA_FEN": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Alice \u2014 Clear, Engaging Educator. British, middle-aged female.",
-    "why": "Academy scholar, 60s, precise. Educational voice matches."
-  },
-  "VELLA": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Matilda \u2014 Knowledgeable, Professional. Middle-aged female.",
-    "why": "Court Singer, formal, weighted. Professional matches."
-  },
-  "OSSIAN": {
-    "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Will \u2014 Relaxed Optimist. Young male.",
-    "why": "nervous, eager student. Young voice, can be less confident."
+    "description": "主角 —— 请按本部小说的 characters.md 替换为实际人物。例如：14 岁少年，干涩、敏锐、偶尔受挫。",
+    "why": "match the protagonist's age / gender / temper from characters.md"
   },
   "MINOR": {
     "voice_id": "REPLACE_WITH_VOICE_ID",
-    "description": "Roger \u2014 utility voice for unnamed characters.",
-    "why": "neutral enough for merchants, clerks, minor parts."
+    "description": "次要 / 未具名人物的通用声音。中性，适合商贩、文书、过场角色。",
+    "why": "fallback voice for unnamed bit characters."
   }
 }

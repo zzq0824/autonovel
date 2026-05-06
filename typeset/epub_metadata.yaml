@@ -1,9 +1,9 @@
 ---
-title: TITLE
-author: AUTHOR
-lang: en
-rights: This is a work of fiction.
-publisher: Publisher Name
+title: 未命名小说
+author: 作者
+lang: zh-Hans
+rights: 本书为虚构作品。
+publisher: 出版方
 date: 2026
 cover-image: ../art/epub_front_cover.png
 css: epub_style.css

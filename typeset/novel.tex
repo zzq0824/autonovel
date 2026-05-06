@@ -1,6 +1,6 @@
 \documentclass[11pt, openany]{book}
 
-% === GEOMETRY: Trade paperback (5.5 x 8.5 inches) ===
+% === GEOMETRY: 32 开（5.5 x 8.5 inches，与原版相同）===
 \usepackage[
   paperwidth=5.5in,
   paperheight=8.5in,
@@ -11,34 +11,48 @@
   headheight=14pt
 ]{geometry}
 
-% === FONTS ===
+% === FONTS（中文版）===
+% 编译需 xelatex（不能用 pdflatex / lualatex）。
+% 系统需安装 Noto CJK（Linux：noto-cjk；macOS：Source Han Serif；Windows：思源宋体）。
 \usepackage{fontspec}
-\setmainfont{EB Garamond}[
-  Ligatures=TeX,
-  Numbers=OldStyle
-]
+\usepackage{xeCJK}
+\setCJKmainfont[Path=,
+  AutoFakeBold=2.5,
+  AutoFakeSlant=0.2]{Noto Serif CJK SC}
+\setmainfont{Latin Modern Roman}            % 拉丁字符回退（用于英文人名等）
 
-% === TYPOGRAPHY ===
+% 中文章节序号（第一章 / 第二章）。如果系统没装 zhnumber 包，
+% 可注释下面两行，章节会用阿拉伯数字"1, 2, 3"渲染。
+\IfFileExists{zhnumber.sty}{%
+  \usepackage{zhnumber}%
+  \renewcommand{\thechapter}{\zhnumber{\arabic{chapter}}}%
+}{%
+  \renewcommand{\thechapter}{\arabic{chapter}}%
+}
+
+% === 排版细节 ===
 \usepackage{microtype}
 \usepackage{setspace}
-\setstretch{1.12}
+\setstretch{1.45}                            % 中文行距比拉丁稍宽
 \usepackage{parskip}
-\setlength{\parindent}{1.5em}
+\setlength{\parindent}{2em}                  % 中文段首缩进 2 字
 \setlength{\parskip}{0pt}
 
-% === GRAPHICS ===
+% === 图形 ===
 \usepackage{graphicx}
 
-% === DROP CAPS ===
-\usepackage{lettrine}
-\setcounter{DefaultLines}{2}
+% === 章首装饰（不再用 lettrine —— CJK bbox 不工作）===
+% 改用稍大首字 + 不缩进
+\newcommand{\chapterleadparagraph}[1]{%
+  \noindent{\fontsize{16pt}{18pt}\selectfont #1}%
+}
 
-% === HEADERS AND FOOTERS ===
+% === 页眉页脚 ===
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[LE]{\small\textsc{the second son of the house of bells}}
-\fancyhead[RO]{\small\textit{\leftmark}}
+\fancyhead[LE]{\small\novelheadertitle}
+\fancyhead[RO]{\small\itshape\leftmark}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0pt}
 
@@ -48,17 +62,17 @@
   \renewcommand{\headrulewidth}{0pt}
 }
 
-% === CHAPTER STYLE ===
+% === 章标题 ===
 \usepackage{titlesec}
 
-% Ornamental bell motif (using dingbats)
+% 装饰花纹
 \newcommand{\bellornament}{%
   \par\noindent\vspace{6pt}%
   \hfill{\large\symbol{"2756}}\hfill\null%
   \vspace{6pt}\par%
 }
 
-% Scene break ornament
+% 场景分隔
 \newcommand{\scenebreak}{%
   \par\vspace{0.6\baselineskip}%
   \noindent\hfil%
@@ -74,85 +88,93 @@
   \par\vspace{0.6\baselineskip}%
 }
 
-\renewcommand{\thechapter}{\Roman{chapter}}
+% 章标题样式（中文版用加粗代替原来的 small caps）
 \titleformat{\chapter}[display]
   {\normalfont\centering}
-  {\vspace*{1.5in}\footnotesize\textsc{chapter \thechapter}}
+  {\vspace*{1.5in}\footnotesize\bfseries 第\thechapter 章}
   {4pt}
-  {\Large\itshape}
+  {\Large}
   [\vspace{8pt}{\small--- $\diamond$ ---}\vspace{0.5in}]
 
 \titlespacing*{\chapter}{0pt}{0pt}{0pt}
 
-% Lowercase chapter name in header
+% 章节名带入页眉
 \renewcommand{\chaptermark}[1]{\markboth{#1}{}}
 
-% === TITLE PAGE DESIGN ===
+% === 元数据（每部小说在此覆盖） ===
+% 作者可在文档开头通过 \renewcommand 修改这些命令的值
+\newcommand{\novelheadertitle}{未命名小说}
+\newcommand{\noveltitle}{未命名小说}
+\newcommand{\novelauthor}{作者}
+\newcommand{\novelsubtitle}{长篇小说}
+\newcommand{\novelimprint}{}
+\newcommand{\novelepigraph}{%
+  \itshape 题词由 outline.md 或 seed.txt 派生，请人工填写。\par%
+}
+\newcommand{\novelendline}{%
+  \small\itshape 完。%
+}
+
+% 如果存在 metadata.tex，导入它（用于覆盖以上命令）
+\IfFileExists{metadata.tex}{\input{metadata.tex}}{}
+
+% === 标题页 ===
 \newcommand{\makenoveltitle}{%
   \thispagestyle{empty}
   \begin{center}
   \vspace*{2in}
-  
-  {\small\textsc{the}}\\[0.15in]
-  
-  {\Huge\textsc{Second Son}}\\[0.1in]
-  
-  {\small\textsc{of the}}\\[0.15in]
-  
-  {\Huge\textsc{House of Bells}}\\[0.4in]
-  
-  {\small------\quad$\diamond$\quad------}\\[0.5in]
-  
-  {\large\textit{A Novel}}\\[1in]
-  
-  {\Large\textsc{Claude Hermes}}\\[1.5in]
-  
+
+  {\Huge\bfseries\noveltitle}\\[0.4in]
+
+  {\small——\quad$\diamond$\quad——}\\[0.5in]
+
+  {\large\itshape\novelsubtitle}\\[1in]
+
+  {\Large\novelauthor}\\[1.5in]
+
   \end{center}
   \clearpage
 }
 
-% === EPIGRAPH ===
+% === 题词页 ===
 \newcommand{\makeepigraph}{%
   \thispagestyle{empty}
   \vspace*{2.5in}
   \begin{center}
   \begin{minipage}{3in}
   \begin{center}
-  \itshape
-  You're not listening to the bell.\\
-  You're listening for what the bell\\
-  is trying to tell you it is.\\[12pt]
+  \novelepigraph
   \end{center}
   \end{minipage}
   \end{center}
   \clearpage
 }
 
-% === HALF TITLE ===
+% === 半标题页 ===
 \newcommand{\makehalftitle}{%
   \thispagestyle{empty}
   \vspace*{3in}
   \begin{center}
-  {\large\textsc{The Second Son of the House of Bells}}
+  {\large\bfseries\noveltitle}
   \end{center}
   \clearpage
 }
 
-% === PDF METADATA ===
+% === PDF 元数据 ===
 \usepackage{hyperref}
 \hypersetup{
-  pdftitle={The Second Son of the House of Bells},
-  pdfauthor={Claude Hermes},
-  pdfsubject={Fantasy Novel},
+  pdftitle={\noveltitle},
+  pdfauthor={\novelauthor},
+  pdfsubject={中文长篇小说},
   hidelinks
 }
 
-% === BEGIN DOCUMENT ===
+% === 文档开始 ===
 \begin{document}
 
 \frontmatter
 
-% Full-bleed cover image (if exists)
+% 全幅封面（如果存在）
 \IfFileExists{../art/cover.png}{%
   \thispagestyle{empty}
   \newgeometry{margin=0pt}
@@ -161,65 +183,52 @@
   \clearpage
 }{}
 
-% Half title
+% 半标题页
 \makehalftitle
 
-% Blank verso
+% 空白背页
 \thispagestyle{empty}
 \mbox{}
 \clearpage
 
-% Title page
+% 标题页
 \makenoveltitle
 
-% Copyright / colophon
+% 版权 / 落款
 \thispagestyle{empty}
 \vspace*{\fill}
 \begin{center}
 
-{\small This is a work of fiction}\\[4pt]
-{\small created by Hermes Agent.}\\[18pt]
+{\small 本书为虚构作品}\\[4pt]
+{\small 由 autonovel 流水线自动产出。}\\[18pt]
 
-{\small For full reproduction code and alternate formats}\\[2pt]
-{\small (ePub, audiobook) please visit:}\\[8pt]
-
-{\small\texttt{https://nousresearch.com/bells}}\\[16pt]
-
-\IfFileExists{../art/qr_bells.png}{%
-  \includegraphics[width=1in]{../art/qr_bells.png}
-}{}
+\novelimprint
 
 \end{center}
 \vspace*{\fill}
-\begin{center}
-\IfFileExists{../art/pdf/nous_logo.pdf}{%
-  \includegraphics[width=0.8in]{../art/pdf/nous_logo.pdf}
-}{}
-\end{center}
-\vspace{0.3in}
 \clearpage
 
-% Epigraph
+% 题词
 \makeepigraph
 
-% Blank verso before main text
+% 主文前的空白背页
 \thispagestyle{empty}
 \mbox{}
 \clearpage
 
 \mainmatter
 
-% === CHAPTERS ===
+% === 章节正文 ===
 \input{chapters_content.tex}
 
-% === END MATTER ===
+% === 后记 ===
 \backmatter
 
 \thispagestyle{empty}
 \vspace*{3in}
 \begin{center}
-{\small------\quad$\diamond$\quad------}\\[0.3in]
-{\small\textit{The bells rang on.}}
+{\small——\quad$\diamond$\quad——}\\[0.3in]
+\novelendline
 \end{center}
 
 \end{document}

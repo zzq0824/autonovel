@@ -57,9 +57,9 @@ def draw_text_with_shadow(draw, position, text, font, fill, shadow_color, shadow
 
 def composite_cover(
     art_path,
-    title="The Second Son of the House of Bells",
-    author="Claude Hermes",
-    subtitle="A Novel",
+    title="未命名小说",
+    author="作者",
+    subtitle="长篇",
     preset="auto",
     output_path=None,
 ):
@@ -176,11 +176,11 @@ def composite_cover(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Composite text over cover art")
-    parser.add_argument("art_path", help="Path to the cover art image")
-    parser.add_argument("--title", default="The Second Son of the House of Bells")
-    parser.add_argument("--author", default="Claude Hermes")
-    parser.add_argument("--subtitle", default="A Novel")
+    parser = argparse.ArgumentParser(description="把书名合成到封面图像上")
+    parser.add_argument("art_path", help="封面图像路径")
+    parser.add_argument("--title", default="未命名小说")
+    parser.add_argument("--author", default="作者")
+    parser.add_argument("--subtitle", default="长篇")
     parser.add_argument("--preset", choices=["auto", "dark", "light"], default="auto")
     parser.add_argument("--output", default=None)
 

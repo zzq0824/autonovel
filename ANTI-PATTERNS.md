@@ -1,184 +1,170 @@
-# AI WRITING ANTI-PATTERNS
+# AI 写作反模式（中文版）
 
-Patterns discovered through iterative evaluation of AI-generated novel
-chapters. These are the specific failure modes that survive prompt
-engineering and surface-level slop detection. They are structural, not
-lexical -- you won't catch them with word lists.
-
-This document supplements ANTI-SLOP.md (which covers word-level slop).
+通过多轮评估 AI 生成的中文小说章节后总结的具体失败模式。这些是绕过 prompt 工程与表层 slop 检测、仍会浮现的**结构性**问题。
 
 ---
 
-## 1. THE OVER-EXPLAIN
+## 1. 过度解释（The Over-Explain）
 
-**The #1 problem.** The narrator restates what a scene already showed.
+叙述者把场景已经展示过的事再说一遍。
 
-A character's hands shake. The dialogue goes silent. The scene lands.
-Then the narrator adds: "He was afraid." Or worse: a full paragraph
-analyzing what the shaking hands meant.
+❌ AI 倾向：
+> 林山把信纸放在桌上。他的手在抖。**这表明他内心十分紧张，因为这封信对他意义重大。**
 
-**Detection:** After every emotional beat, check: does the next
-paragraph explain what just happened? If yes, cut it.
+✅ 修正：删掉那句解释。让动作（手抖、放信）自己说话。
 
-**Rule:** If a scene shows it, the narrator doesn't say it. Trust
-the image, the gesture, the silence.
+诊断：每一个"这表明 / 这意味着 / 显然是因为 / 这是因为"都该被审视。99% 都该删。
 
----
+## 2. 三联感官列表（Triadic Listing）
 
-## 2. TRIADIC LISTING
+X、Y、Z 三件并列。AI 最爱的对仗节奏。
 
-AI defaults to groups of three: "X. Y. Z." or "X and Y and Z."
+❌：
+> 他闻到雨水、湿叶子和远处烧焦的木头味。
+> 她听见钟声、风声和孩子们的笑声。
 
-Sensory descriptions: "Linseed oil. Cold bronze. The faint char..."
-Options: "He could go left. He could go right. He could stay."
-Adjectives: "warm and clean and simple"
+✅：合并两件，删一件，或重构。
+> 雨水里混着湿叶子的味道。再往远处，有什么东西在烧。
 
-**Detection:** Search for three consecutive fragments or three items
-joined by "and." More than 2 per chapter is a pattern.
+每章三联列表 ≤ 1 次。
 
-**Fix:** Combine two items. Cut one. Use a different number. Two is
-often stronger than three.
+## 3. 否定式陈述重复（Negative-Assertion Repetition）
 
----
+「他**不曾** X / 她**没有** Y / 我**未曾** Z」连续使用。
 
-## 3. NEGATIVE-ASSERTION REPETITION
+❌：
+> 他**没有**回头。他**没有**问她为什么。他**也没有**告诉她真相。
 
-"He did not look back."
-"He did not think about the room."
-"He did not say what he meant."
+✅：转主动表达，或者直接删。
+> 他没回头。问也没问。
 
-Each one is fine. Five in a chapter is a tic.
+每章"不曾 / 没有 / 未"连续否定 ≤ 1 处。
 
-**Rule:** Max 1 per chapter. Replace with: active alternatives
-("The door stayed closed"), or just cut (let the absence speak).
+## 4. 内心思绪枚举（Cataloging-by-Thinking）
 
----
+「他想到 X。他想到 Y。他想到 Z。」AI 用来"展示内心"的偷懒办法。
 
-## 4. CATALOGING-BY-THINKING
+❌：
+> 他想到母亲。他想到那年的雪。他想到她临终时握着的那把钥匙。
 
-"He thought about X. He thought about Y. He thought about Z."
+✅：用断句、身体动作或物 / 言一个时刻一个时刻地承载。
+> 那把钥匙在他口袋里。还没掉。
 
-AI compresses reflection into a list of topics the character
-considers. Real interiority is messier -- one thought bleeds into
-another, gets interrupted, loops back.
+## 5. "X 那样地 Y"比喻癖（The Simile Crutch）
 
-**Fix:** Replace with: the thought itself as a fragment ("The two
-years. The wrong-pitched bells."), a physical action, or dialogue.
+「她**像他父亲那样**沉默」「他**用她从前用过的方式**笑」 —— 这种"the way" 句式翻译过来变成中文的"那样地 / 仿佛 / 像 ... 一样"，过度使用。
 
----
+每章 ≤ 2 次。
 
-## 5. THE SIMILE CRUTCH
+## 6. 分节符号当节奏拐杖（Section Break as Rhythm Crutch）
 
-"the way X did Y" -- used 4-8 times per chapter.
+`---` 不是用来"换气"的。它表示**真实的**时间 / 地点跳跃。每章最多 2 处。
 
-AI reaches for simile when it doesn't trust the image. Most of these
-can be cut entirely. The image is already there.
+AI 倾向于在"一段写完不知道怎么继续"时插入分节符号。这是**逃跑**。
 
-**Rule:** Max 2 "the way" similes per chapter. If you need the
-comparison, vary the construction. "Like" is fine. Direct metaphor
-("his words were bronze -- heavy, functional") is better.
+## 7. 段落长度齐整（Paragraph Uniformity）
 
----
+连续 3 段以上长度相近 = 合成感。每章应该有：
 
-## 6. SECTION BREAK AS RHYTHM CRUTCH
+- 至少一段 1-2 句的短段
+- 至少一段 6 句以上的长段
+- 一段对话快切（多个"  "  "  "")
 
-AI uses "---" breaks to avoid writing transitions. A chapter with
-5 section breaks is 5 vignettes, not a chapter.
+## 8. 情感节拍按时到达（Predictable Emotional Arcs）
 
-**Rule:** Max 2 per chapter, for genuine time/location jumps. Force
-continuous prose for everything else.
+AI 写的章节情感按规划准时到达——开头：稳。中段：渐紧。末尾：揭示+收束。这种"准时"本身就是 AI 印记。
 
----
+修正：让情感节拍**早到、迟到、错位、被打断**。比如该揭示的那一刻偏要被一只猫闯进来打断。
 
-## 7. PARAGRAPH LENGTH UNIFORMITY
+## 9. 章节结尾雷同（Repetitive Chapter Endings）
 
-AI paragraphs cluster at 4-6 sentences, especially in middle
-sections. The variation that appears at chapter openings and closings
-flattens in the middle.
+AI 写章节结尾爱用一组：
+- "他望着远方"
+- "她轻轻关上门"
+- "夜色渐深，没有人说话"
+- "雨开始下了"
+- "他知道，**有些事情**永远不会回来了"
 
-**Fix:** Deliberately include 1-2 sentence paragraphs for impact
-and 6+ sentence paragraphs for building. Never 3+ consecutive
-paragraphs of similar length.
+每章末必须**不同**。找出**只属于这一章**的结尾。
 
----
+## 10. 对话里的对仗反命题（Balanced Antithesis in Dialogue）
 
-## 8. PREDICTABLE EMOTIONAL ARCS
+「我**不是**说 X，我是说 Y」「**与其**说 X，**不如**说 Y」 —— 多人物共用同一种修辞模式 = 没有人物辨识度。
 
-Beats arrive on schedule. If the outline says "curiosity → discovery
-→ dread," the chapter delivers exactly that in exactly that order
-with no deviation. Real chapters have moments that arrive early,
-late, or sideways.
+测试：把对话标记去掉，能分辨说话人吗？不能 = 重写。
 
-**Fix:** Include one moment per chapter that surprises: a character
-saying the wrong thing, an emotion arriving before its trigger, a
-beat that interrupts another beat.
+## 11. 对话写得像散文（Dialogue as Written Prose）
 
----
+AI 写的对话太干净 —— 没人结巴、没人打断、没人说错话、没人离题。
 
-## 9. REPETITIVE CHAPTER ENDINGS
+人会：
+- 说一半改口
+- 不接对方刚说的内容（说自己想说的）
+- 用错词然后纠正
+- 拖音、嗯、停顿
+- 同一句话说两次（第一次没说清）
 
-AI finds a closing pattern and reuses it. In this novel: 4 chapters
-ended with "Cass outside, listening to his father work."
+每章至少要有一处**不光滑**的对话。
 
-**Rule:** No two chapters end with the same structural move. Each
-ending belongs to THAT chapter specifically.
+## 12. 场景与概述失衡（Scene vs Summary Imbalance）
+
+AI 倾向写概述（"他度过了三天"），而非场景（一刻一刻发生）。
+
+规则：每章至少 70% 在场景里。概述只用来：
+- 时间过渡
+- 跳过无事发生的间隔
+- 极短的背景压缩（< 50 字）
 
 ---
 
-## 10. BALANCED ANTITHESIS IN DIALOGUE
+## 13. 心眸唇眉四件套滥用
 
-"I'm not saying X. I'm saying Y."
-"Not X, but Y."
-"There's a difference."
-"Those are different things."
+中文 AI 特有，不属于英文版反模式表。每章合计 ≤ 3 次：
 
-AI loves this rhetorical formula. It sounds clever the first time.
-By the third character using it, they all sound like the same person.
+- "心头一颤 / 一紧 / 一沉"
+- "眸光流转 / 眸中闪过"
+- "嘴角微微上扬 / 唇瓣轻颤"
+- "眉头紧锁 / 眉心一蹙"
 
-**Detection:** Check that no two characters share this sentence
-structure. If multiple characters use it, they're not distinct.
+代之以：具体的身体反应（手指扣进掌心 / 突然咳嗽 / 看向自己的鞋）。
 
----
+## 14. "X 道"对话标记滥用
 
-## 11. DIALOGUE AS WRITTEN PROSE
+中文小说传统极少用 "X 道"。每章 ≤ 2 处。详见 ANTI-SLOP.md。
 
-Characters speak in complete, polished sentences. No one stumbles,
-interrupts, trails off, or says something slightly wrong.
+## 15. ABB 副词病
 
-A 14-year-old does not speak in epigrams. A 60-year-old merchant
-does not deliver thesis statements.
+「深深地凝视 / 紧紧地握住 / 缓缓地走来」—— 中文里这种 ABB+地+动词模式比英文更显套路。删"地+副词"，让动词独立。
 
-**Fix:** Dialogue should sound like speech. Include: false starts,
-interruptions, trailing off, saying the wrong word, not finishing
-a thought. At least one imperfect line per scene.
+每章 ABB+地+动词 ≤ 5 处。
 
----
+## 16. 翻译腔句式
 
-## 12. SCENE-SUMMARY IMBALANCE
+「**在**...**之下**」「**对**...**而言**」「**就**...**来说**」 —— 中文 AI 文体里常混入英文小说的句式痕迹。读出声，听起来像翻译就重写。
 
-AI defaults to summary when a scene would be more engaging. "The
-morning passed" skips what could be a 200-word interaction that
-reveals character.
+## 17. 三连"的"
 
-**Rule:** 70%+ of each chapter should be in-scene (moment by moment,
-with dialogue and action). Summary is for time compression only.
+「她**的**母亲**的**朋友**的**女儿」—— 拆开重写。
+
+## 18. 成语堆砌
+
+「**鳞次栉比**的屋宇**美轮美奂**，**气势磅礴**」—— 三个以上四字成语连用 = 评论文，不是小说。
+
+详见 ANTI-SLOP.md Tier 1 禁词表。
 
 ---
 
-## EVALUATION NOTES
+## 自检清单
 
-These patterns are invisible to standard slop detection (word lists,
-regex). They require either:
+写完一章后核：
 
-1. **Adversarial editing** -- ask a judge to cut 500 words and
-   classify what it cuts. OVER-EXPLAIN type dominates every time.
-
-2. **Comparative ranking** -- head-to-head matchups between chapters
-   force discrimination the judge can't avoid. Produces a true rank
-   order. Swiss-style Elo tournament works well with 4 rounds.
-
-3. **Sentence-level grading** -- flag every sentence as STRONG /
-   FINE / WEAK / CUT. The distribution matters more than the average.
-
-Standard 1-10 scoring collapses to a 2-point band regardless of
-rubric calibration. Avoid absolute scoring for revision work.
+- [ ] 没有 12 项原始反模式中任何一项的明显发生
+- [ ] 心眸唇眉四件套合计 ≤ 3 次
+- [ ] "X 道"标记 ≤ 2 处
+- [ ] ABB+地+动词 ≤ 5 处
+- [ ] 没有翻译腔句式
+- [ ] 没有连续三个"的"
+- [ ] 没有三个以上四字成语连用
+- [ ] 至少有一处不光滑的对话
+- [ ] 章节结尾**与前几章不同**
+- [ ] 70%+ 在场景里
