@@ -1,157 +1,168 @@
-# Voice Profile
+# 文风档案 (Voice Profile)
 
-This file has two parts:
-1. **Guardrails** -- universal rules to avoid AI-generated slop. These
-   apply to ALL voices and are non-negotiable.
-2. **Voice Identity** -- the specific voice for THIS novel. Generated
-   during the foundation phase. Could be anything: dense and mythic,
-   spare and brutal, warm and whimsical. The voice emerges from the
-   story's needs.
+本文件分两部分：
+1. **底线 (Guardrails)** —— 防 AI 套路的通用规则，对**所有声音**都适用，不可妥协。
+2. **本书声音 (Voice Identity)** —— 这部小说独有的声音。在 foundation 阶段确定。可以是任何风格：浓密如神话，简短如刀痕，温暖如灶边讲故事。声音应当从故事的需要里长出来。
 
 ---
 
-## Part 1: Guardrails (permanent, all novels)
+## Part 1：底线（永久通用）
 
-These are the cliff edges. Stay away from them regardless of voice.
+这些是悬崖边。无论本书选择什么声音，都不要靠近。
 
-### Tier 1: Banned words -- kill on sight
+### Tier 1：见即必删（统计意义上的 AI 露馅词）
 
-These are statistically overrepresented in LLM output vs. human writing.
-If one appears, rewrite the sentence. No exceptions.
+这些词在 LLM 中文输出里被**严重过度使用**。一旦出现，重写整句。无例外。
 
-| Kill this         | Use instead                                    |
-|-------------------|------------------------------------------------|
-| delve             | dig into, examine, look at                     |
-| utilize           | use                                            |
-| leverage (verb)   | use, take advantage of                         |
-| facilitate        | help, enable, make possible                    |
-| elucidate         | explain, clarify                               |
-| embark            | start, begin                                   |
-| endeavor          | effort, try                                    |
-| encompass         | include, cover                                 |
-| multifaceted      | complex, varied                                |
-| tapestry          | (describe the actual thing)                    |
-| testament to      | shows, proves, demonstrates                    |
-| paradigm          | model, approach, framework                     |
-| synergy           | (delete the sentence and start over)           |
-| holistic          | whole, complete, full-picture                  |
-| catalyze          | trigger, cause, spark                          |
-| juxtapose         | compare, contrast, set against                 |
-| nuanced (filler)  | (cut it -- if it's nuanced, show how)          |
-| realm             | area, field, domain                            |
-| landscape (metaphorical) | field, space, situation                 |
-| myriad            | many, lots of                                  |
-| plethora          | many, a lot                                    |
+| 必删           | 改用                                                                  |
+|---------------|----------------------------------------------------------------------|
+| 璀璨            | 写出具体的光感（金、白炽、磷、烛火、月色、霜白）                              |
+| 斑斓            | 把颜色一一说出来（朱红、绛紫、墨绿、靛青）                                  |
+| 波光粼粼          | 写水面具体怎么动（裂、皱、晃、抖、被风划开一道）                              |
+| 金光闪闪          | 是金子还是黄铜？阳光是从哪个角度落下？                                       |
+| 炯炯有神          | （是评语，不是描写。删）                                                  |
+| 深邃            | （评语，不是描写。改成具体的：颜色 / 距离 / 形状）                             |
+| 绝美 / 惊鸿        | （形容词，没说任何事。删）                                                |
+| 举世无双 / 举足轻重    | （评价词，让事实自己说话。删）                                            |
+| 不容忽视          | （议论文用语，不是小说语言。删）                                            |
+| 淋漓尽致          | （成语堆砌。改成具体的动作 / 表情）                                          |
+| 栩栩如生 / 跃然纸上    | （评语，不是描写。删）                                                  |
+| 鳞次栉比          | 数它们 / 比喻它们，不要套用成语                                             |
+| 川流不息 / 络绎不绝    | 写**多少**人、**怎么走**                                                |
+| 一应俱全 / 五光十色    | 列出三件具体的东西                                                      |
+| 美轮美奂 / 登峰造极    | （评价词。删）                                                           |
+| 巧夺天工 / 叹为观止    | （评价词。删）                                                           |
+| 气势磅礴 / 蔚为壮观    | 写出具体的**尺度**与**声音**                                              |
 
-### Tier 2: Suspicious in clusters
+### Tier 2：集群可疑（ABB 副词病 / 网文填料）
 
-Fine alone. Three in one paragraph = rewrite that paragraph.
+单独使用没问题。**同一段三个以上 = 重写整段**。
 
-robust, comprehensive, seamless, cutting-edge, innovative, streamline,
-empower, foster, enhance, elevate, optimize, pivotal, intricate,
-profound, resonate, underscore, harness, navigate (metaphorical),
-cultivate, bolster, galvanize, cornerstone, game-changer, scalable
+> 缓缓、悠悠、淡淡、微微、轻轻、深深、紧紧、渐渐、默默、静静、幽幽、袅袅、淙淙、潺潺、凛冽、清冷、肃穆、庄严、凝重、复杂、微妙、意味深长
 
-### Tier 3: Filler phrases -- delete on sight
+中文 AI 倾向于在每个动词前都贴一个副词。常见的灾难句式：
 
-These add zero information. The sentence is always better without them.
+> 她**缓缓**抬起头，**淡淡**看了一眼远方，**微微**叹了口气。
 
-- "It's worth noting that..." -> just state it
-- "It's important to note that..." -> just state it
-- "Importantly, ..." / "Notably, ..." / "Interestingly, ..." -> just state it
-- "Let's dive into..." / "Let's explore..." -> start with the content
-- "As we can see..." -> they can see
-- "Furthermore, ..." / "Moreover, ..." / "Additionally, ..." -> and, also, or just start
-- "In today's [fast-paced/digital/modern] world..." -> delete the clause
-- "At the end of the day..." -> delete
-- "It goes without saying..." -> then don't say it
-- "When it comes to..." -> just talk about the thing
-- "One might argue that..." -> argue it or don't
-- "Not just X, but Y" -> restructure (the #1 LLM rhetorical crutch)
+直接动词更有力：
 
-### Structural slop patterns
+> 她抬头看远方，叹了口气。
 
-These are the shapes that betray machine origin. Avoid them in any voice.
+### Tier 3：套话填充语（见即删）
 
-**Paragraph template machine**: Don't repeat the same paragraph
-structure (topic sentence -> elaboration -> example -> wrap-up).
-Vary it. Sometimes the point comes last. Sometimes a paragraph is
-one sentence. Sometimes three long ones in a row.
+这些词组的信息量为零。删掉之后句子永远更好。
 
-**Sentence length uniformity**: If every sentence is 15-25 words,
-it reads as synthetic. Mix in fragments. And long, winding,
-clause-heavy sentences that carry the reader through a thought
-the way a river carries a leaf. Then a short one.
+- "值得注意的是 / 值得一提的是" → 直接说
+- "归根结底 / 综上所述 / 总而言之" → 删整句开头
+- "众所周知 / 不言而喻 / 显而易见" → 那就别说了
+- "毋庸置疑" → 你确认就别用副词强化
+- "由此可见" → 让前一句自己说，不要总结
+- "在某种意义上 / 从某种程度上讲" → 要么明确意义是什么，要么删
+- "不仅...而且" → 拆成两句
+- "一方面...另一方面" → 议论文体，不是小说体
+- "在...之下" / "对...而言" / "就...来说" → 翻译腔。重写
 
-**Transition word addiction**: If consecutive paragraphs start with
-"However," "Furthermore," "Additionally," "Moreover," "Nevertheless"
--- rewrite. Start with the subject. Start with action. Start with
-dialogue. Start with a sense detail.
+### 中文小说结构性 slop 模式
 
-**Symmetry addiction**: Don't balance everything. Three pros, three
-cons, five steps -- that's a tell. Real writing is lumpy. Some
-sections are long because they need to be. Some are two lines.
+这些是 AI 中文写作里**特有**的露馅形状。本节的内容比英文版的"段落模板机"更重要 —— 这些是中文专属的指纹。
 
-**Hedge parade**: "may," "might," "could potentially," "it's possible
-that" -- pick one per page, max. State things or don't.
+**对仗病**：四字句、对偶、排比连用 —— 像八股不像小说。AI 容易这样写：
 
-**Em dash overload**: One or two per page is fine. Five per paragraph
-is a dead giveaway. Use commas, parentheses, or two sentences instead.
+> 春风化雨，润物无声；冬雪覆山，万籁俱寂。
 
-**List abuse**: Prose, not bullets. If the scene calls for a list
-(a merchant's inventory, a spell's components), earn it. Don't
-default to bullet points because it's easy.
+把骈句拆开，让它呼吸：
 
-### The smell test
+> 春天的雨下得轻。冬天的雪压住整座山，连鸟都不叫。
 
-After writing any passage, ask:
-- Read it aloud. Does it sound like a person talking?
-- Is there a single surprising sentence? Human writing surprises.
-- Does it say something specific? Could you swap the topic and the
-  words would still work? Specificity kills slop.
-- Would a reader think "AI wrote this"? If yes, rewrite.
+**"道"字滥用**：现代中文小说传统极少用 "X 道" 做对话标记。每章合计 ≤ 2 处。默认裸引号 + 动作。
+
+❌：
+> "我不知道，"她**说道**。
+> "我也不知道，"他**答道**。
+> "那我们走吧，"她**又说道**。
+
+✅：
+> "我不知道。"她把手插进口袋。
+> "我也不知道。"
+> 她朝门口走了一步。"那走吧。"
+
+**副词病**：「深深地凝视 / 紧紧地握住 / 缓缓地走来 / 悄悄地靠近」—— ABB+地+动词模式中文里比英文更显套路。第一次写出来时立即检查能否删除"地+副词"，让动词独立。
+
+**三联句病**：「他**不是** X，**不是** Y，也**不是** Z」「**既** X，**又** Y，**更** Z」—— AI 最爱的对仗节奏。允许偶尔使用（每章 ≤ 1 次），不允许成为段落结构默认。
+
+**句长齐整**：每句都是 12-18 字 = 合成感。混入 4 字断句、25+ 字长句、对话片段。**读出声**，听节奏。
+
+**段落模板机**：开头 - 展开 - 例证 - 收束 = 议论文段落，不是小说段落。小说段落应当长短不齐 —— 有时一句一段，有时三段连起来不分行。
+
+**"心 / 眸 / 唇 / 眉"四件套**：中文 AI 写人最爱用这四个部位 —— "心一颤"、"眸光闪"、"唇微抿"、"眉紧锁"。每章合计 ≤ 3 次（合计，不是每个 3 次）。
+
+**"忍不住 / 不由地 / 下意识地 / 不禁"**：作者解释角色为什么动作的拐杖词。删，让动作自己解释。
+
+**翻译腔**：「在...之下」「对...而言」「就...来说」「作为一个...的...」「我必须承认 / 我不得不」—— 中文 AI 文体里常常混入英文小说的句式痕迹。读出声，听起来像翻译稿就重写。
+
+**心眸唇眉之外的 AI 老套**：
+
+- "倒吸一口冷气 / 凉气" —— 网文专用震惊。删。
+- "心头一颤 / 一紧 / 一沉 / 一凛" —— 一章 ≤ 1 次。
+- "嘴角微微上扬 / 勾起一抹弧度" —— 描述微笑请用更具体的：嘴角往一边歪 / 露出一颗虎牙 / 没忍住先笑了一声。
+- "目光如炬 / 灼灼 / 凌厉" —— 评价词。改写成"看了她很久"或者具体描写眼神动了几下。
+- "乌黑长发如瀑布般垂落" —— 言情小说陈词。要么不写头发，要么把"瀑布"换成更接近这个人的具体物（油 / 雨 / 帘子 / 一束麻）。
+
+### 嗅探测试
+
+写完一段后问自己：
+
+- **读出声**：听起来像活人在说话吗？
+- **有没有一句让人意外的话？** 人写的字会让读者意外。AI 写的字让人觉得自己提前几个字就猜到了。
+- **它说了具体的事吗？** 如果换个题材、换两个名词，这段话还能用 = slop。
+- **一个普通读者会不会想"这是 AI 写的"？** 是的话重写。
 
 ---
 
-## Part 2: Voice Identity (generated per novel)
+## Part 2：本书声音（每部小说一份）
 
-Everything below is discovered during the foundation phase.
-The agent proposes a voice that serves THIS story, writes exemplar
-passages, and calibrates against them throughout drafting.
+下面所有内容在 foundation 阶段填写。Agent 会为**这个故事**提出一种声音，写下范文段落，并在整本书的写作过程中以这些范文为校准基准。
 
-### Tone
-<!-- Generated during foundation. Examples:
-     "Mythic and weighty, like stone tablets being read aloud."
-     "Warm, slightly breathless, like a traveler telling stories by firelight."
-     "Spare and cold. Sentences like knife cuts." -->
+### Tone（基调）
+<!-- 在 foundation 阶段生成。例如：
+     "神话感、有重量，像石碑被慢慢念出来。"
+     "温暖、略带气喘，像旅人在火堆边讲故事。"
+     "稀薄而冷，句子像刀痕。"
+     "周作人式的散淡，几乎不动情。" -->
 
-### Sentence Rhythm
-<!-- Generated during foundation. Not rules -- tendencies.
-     "Long sentences for worldbuilding, short for violence."
-     "Dialogue is clipped. Narration flows." -->
+### Sentence Rhythm（句子节奏）
+<!-- 在 foundation 阶段生成。不是规则，是倾向。例如：
+     "世界观铺陈用长句，暴力场景用短句。"
+     "对话短促，叙述舒缓。"
+     "段落普遍短，偶有 200 字以上的长段落作为停顿。" -->
 
-### Vocabulary Register
-<!-- Generated during foundation. The word-hoard for this world.
-     What does this world SOUND like? Anglo-Saxon blunt? Latinate
-     baroque? Colloquial modern? A mix? -->
+### Vocabulary Register（词汇调性）
+<!-- 在 foundation 阶段生成。本书的"词汇井"。
+     这个世界听起来是什么样的？
+     文白夹杂还是纯白话？现代汉语还是带些方言？
+     近代翻译腔（钱钟书）还是民国白话（沈从文）？
+     工部书院体（刘慈欣）还是市井口语（王朔）？ -->
 
-### POV and Tense
-<!-- Generated during foundation.
-     Third limited? First? Rotating? Omniscient?
-     Past tense? Present? Does it shift for effect? -->
+### POV and Tense（视角与时态）
+<!-- 在 foundation 阶段生成。
+     第三人称限知？第一人称？多视角轮换？全知？
+     过去时？现在时？是否切换以制造效果？
+     中文小说默认零时态，但叙述距离仍可调（贴近 / 退远）。 -->
 
-### Dialogue Conventions
-<!-- Generated during foundation.
-     Tags: "said" only? Action beats? No tags at all?
-     How do characters sound different from each other?
-     Subtext rules: do characters say what they mean? -->
+### Dialogue Conventions（对话约定）
+<!-- 在 foundation 阶段生成。
+     标记：默认裸引号？带动作？是否完全省略对话标记？
+     不同人物如何区分？方言？口头禅？句长？省略习惯？
+     潜台词规则：人物会直接说出心里话吗？还是绕？还是相互错过？ -->
 
-### Exemplar Passages
-<!-- 3-5 paragraphs that ARE the voice. Written during foundation.
-     The agent calibrates every chapter against these.
-     These are the tuning fork. -->
+### Exemplar Passages（范文段落）
+<!-- 3-5 段散文，**就是**这种声音。在 foundation 阶段写好。
+     Agent 在每章写作时拿这些段落做校准基准。
+     这些是音叉。 -->
 
-### Anti-Exemplars
-<!-- 3-5 paragraphs showing what this voice is NOT.
-     Not the generic anti-slop stuff above -- specific to this novel.
-     "This is too flowery for our tone." "This is too modern." -->
+### Anti-Exemplars（反范文）
+<!-- 3-5 段段落，展示"这种声音**不是**什么"。
+     不是上面那些通用 anti-slop —— 是针对**这部小说**的具体反例：
+     "这一段太华丽了，本书该更克制。"
+     "这一段太现代了，本书要稍带文白。"
+     "这一段对仗太工整，本书的节奏应当更乱、更口语。" -->

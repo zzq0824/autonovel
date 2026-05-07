@@ -1,470 +1,411 @@
-# AUTONOVEL: Reproducible Novel Pipeline
+# AUTONOVEL：可复现的中文小说流水线
 
-## Overview
+## 概述
 
-This document captures the full automated pipeline for generating,
-drafting, and revising a novel from a seed concept. Derived from the
-production of "The Second Son of the House of Bells" (75k words, 23
-chapters, 5 revision cycles).
+本文档完整记录"从种子概念到完整中文长篇小说"的自动化流水线。
 
-The goal: a user provides a seed concept. Everything else is automated.
+**目标**：用户给出一个种子概念，其余全部自动化。
+
+> 详细人工分步指南见 [WORKFLOW.md](WORKFLOW.md)；agent 指令见 [program.md](program.md)；叙事手艺见 [CRAFT.md](CRAFT.md)；AI 露馅模式见 [ANTI-SLOP.md](ANTI-SLOP.md) 与 [ANTI-PATTERNS.md](ANTI-PATTERNS.md)。
 
 ---
 
-## Master Branch (Framework)
+## 主分支（框架）
 
-Master contains no story-specific content. It is the reusable base.
+主分支不含特定故事内容。它是**可复用的基底**。
 
 ```
-FRAMEWORK (reusable, never edited by the pipeline):
-  README.md            -- project overview
-  WORKFLOW.md          -- step-by-step human guide
-  PIPELINE.md          -- this file (automation spec)
-  program.md           -- agent instructions per phase
-  CRAFT.md             -- craft education (plot, character, world, prose)
-  ANTI-SLOP.md         -- word-level AI tell detection
-  ANTI-PATTERNS.md     -- structural AI pattern detection
+FRAMEWORK（可复用，流水线不会修改）：
+  README.md            —— 项目概览
+  WORKFLOW.md          —— 人工分步指南
+  PIPELINE.md          —— 本文件（自动化规范）
+  program.md           —— 各阶段的 agent 指令
+  CRAFT.md             —— 叙事手艺教育（情节、人物、世界观、散文）
+  ANTI-SLOP.md         —— 词级 AI 露馅检测
+  ANTI-PATTERNS.md     —— 结构性 AI 模式检测
+  llm_client.py        —— 统一 LLM 客户端（Anthropic + OpenAI 兼容）
 
-TEMPLATES (empty shells, filled per-novel on branch):
-  voice.md             -- Part 1 (guardrails) permanent; Part 2 blank
-  world.md             -- section headers only
-  characters.md        -- structure template only
-  outline.md           -- structure template only
-  canon.md             -- empty with instructions
-  MYSTERY.md           -- blank template
-  state.json           -- {phase: "foundation", iteration: 0, debts: []}
+TEMPLATES（空壳，每部小说在分支上填写）：
+  voice.md             —— Part 1（底线）永久；Part 2 空白
+  world.md             —— 仅含章节标题
+  characters.md        —— 仅含结构模板
+  outline.md           —— 仅含结构模板
+  canon.md             —— 空，含说明
+  MYSTERY.md           —— 空白模板
+  state.json           —— {phase: "foundation", iteration: 0, debts: []}
 
-TOOLS (the pipeline machinery):
-  Foundation:
-    seed.py              -- generate 10 seed concepts
-    gen_world.py         -- seed → world.md
-    gen_characters.py    -- seed + world → characters.md
-    gen_outline.py       -- seed + world + chars → outline.md (part 1)
-    gen_outline_part2.py -- outline + chars → foreshadowing ledger
-    gen_canon.py         -- world + chars → canon.md (hard facts)
-    voice_fingerprint.py -- trial passages → voice.md Part 2
+TOOLS（流水线机器）：
+  Foundation：
+    seed.py              —— 生成 10 个种子概念
+    gen_world.py         —— seed → world.md
+    gen_characters.py    —— seed + world → characters.md
+    gen_outline.py       —— seed + world + chars → outline.md（part 1）
+    gen_outline_part2.py —— outline + chars → 续写 + 伏笔账本
+    gen_canon.py         —— world + chars → canon.md（硬事实）
+    voice_fingerprint.py —— 文风量化分析
 
-  Drafting:
-    draft_chapter.py     -- write a single chapter with anti-pattern rules
-    run_drafts.py        -- batch sequential chapter drafter
+  Drafting：
+    draft_chapter.py     —— 写一章（带反模式规则）
+    run_drafts.py        —— 批量按序写章
 
-  Evaluation:
-    evaluate.py          -- mechanical slop scorer + LLM judge
-                            modes: --phase=foundation, --chapter=N, --full
+  Evaluation：
+    evaluate.py          —— 机械 slop 扫描 + LLM 裁判
+                            模式：--phase=foundation, --chapter=N, --full
 
-  Revision:
-    adversarial_edit.py  -- "cut 500 words" judge → classified cut list
-    compare_chapters.py  -- head-to-head Elo tournament
-    reader_panel.py      -- 4-persona novel-level evaluation
-    gen_revision.py      -- rewrite chapter from a revision brief
-    build_arc_summary.py -- regenerate arc_summary.md from chapters
-    build_outline.py     -- regenerate outline.md from chapters
+  Revision：
+    adversarial_edit.py  —— "砍 500 字"裁判 → 分类切口
+    compare_chapters.py  —— 章节两两 Elo 锦标赛
+    reader_panel.py      —— 4 人读者评审团
+    gen_revision.py      —— 按修订 brief 重写章节
+    build_arc_summary.py —— 从章节重建 arc_summary.md
+    build_outline.py     —— 从章节重建 outline.md
 
-  Export:
-    typeset/novel.tex    -- LaTeX template (EB Garamond, trade paperback)
-    typeset/build_tex.py -- chapters/*.md → chapters_content.tex
+  Export：
+    typeset/novel.tex    —— LaTeX 模板（xeCJK + 思源宋体）
+    typeset/build_tex.py —— chapters/*.md → chapters_content.tex
 
-  Orchestrator:
-    run_pipeline.py      -- NEW: fully automated pipeline runner
-
-CONFIG:
-  .env.example           -- API key template
-  pyproject.toml         -- Python dependencies (httpx, dotenv)
-  .python-version
-  .gitignore
+  Orchestrator：
+    run_pipeline.py      —— 完整自动化编排器
 ```
 
 ---
 
-## Per-Novel Branch (Generated)
+## 每部小说分支（自动生成）
 
-Everything below is created automatically on a branch.
+下面这些都在分支上自动创建：
 
 ```
-  seed.txt               -- chosen seed concept
-  world.md               -- filled world bible
-  characters.md          -- filled character registry
-  outline.md             -- filled chapter outline + foreshadowing ledger
-  voice.md Part 2        -- discovered voice identity
-  canon.md               -- accumulated hard facts
-  MYSTERY.md             -- central mystery (author-only)
-  chapters/ch_*.md       -- the prose
-  state.json             -- current phase, scores, debts
-  results.tsv            -- experiment log (every keep/discard)
-  arc_summary.md         -- chapter summaries for panel evaluation
-  edit_logs/*.json       -- adversarial cuts, panel results, tournament
-  eval_logs/*.json       -- full evaluation results
-  briefs/*.md            -- revision briefs (input to gen_revision.py)
-  typeset/novel.pdf      -- typeset PDF
+seed.txt               —— 选定的种子概念
+world.md               —— 填好的世界观
+characters.md          —— 填好的人物名册
+outline.md             —— 填好的章节大纲 + 伏笔账本
+voice.md Part 2        —— 发现的文风身份
+canon.md               —— 累积的硬事实
+MYSTERY.md             —— 中心谜团（仅作者）
+chapters/ch_*.md       —— 散文
+state.json             —— 当前阶段、分数、债务
+results.tsv            —— 实验日志（每次 keep / discard）
+arc_summary.md         —— 供评审团使用的章节摘要
+edit_logs/*.json       —— 对抗式切口、评审团结果、锦标赛
+eval_logs/*.json       —— 完整评估结果
+briefs/*.md            —— 修订 brief（输入 gen_revision.py）
+typeset/novel.pdf      —— 排版好的 PDF
 ```
 
 ---
 
-## THE PIPELINE
+## 流水线
 
-### Phase 0: Setup
+### Phase 0：准备
 
 ```
-INPUT:  seed.txt (user-provided or generated via seed.py)
-OUTPUT: branch created, .env configured
+INPUT：seed.txt（用户提供，或经 seed.py 生成）
+OUTPUT：分支已建，.env 已配
 
 1. git checkout -b autonovel/<tag>
-2. Verify .env has an LLM API key (ANTHROPIC_API_KEY or OPENAI_API_KEY)
-3. Verify seed.txt exists and is specific enough
-   (world-differentiator, central tension, cost/constraint, sensory hook)
+2. 核对 .env 含一个 LLM API key（ANTHROPIC_API_KEY 或 OPENAI_API_KEY）
+3. 核对 seed.txt 存在且**足够具体**
+   （世界差异点、中心张力、代价 / 限制、感官钩子）
 ```
 
-### Phase 1: Foundation
+### Phase 1：基础
 
 ```
-INPUT:  seed.txt
-OUTPUT: world.md, characters.md, outline.md, voice.md, canon.md, MYSTERY.md
-EXIT:   foundation_score > 7.5 AND lore_score > 7.0
+INPUT：seed.txt
+OUTPUT：world.md, characters.md, outline.md, voice.md, canon.md, MYSTERY.md
+EXIT：foundation_score > 7.5 且 lore_score > 7.0
 
-Loop:
-  1. gen_world.py        → world.md (lore, magic system, geography, factions)
-  2. gen_characters.py   → characters.md (wound/want/need/lie, speech, sliders)
-  3. gen_outline.py      → outline.md part 1 (beats, chapter structure)
-  4. gen_outline_part2.py → outline.md part 2 (foreshadowing ledger)
-  5. Voice discovery: write 5 trial passages in different registers,
-     select best, fill voice.md Part 2 with exemplars + anti-exemplars
-  6. Define MYSTERY.md (the central secret the reader discovers)
-  7. gen_canon.py        → canon.md (cross-reference all hard facts)
+LOOP：
+  1. gen_world.py        → world.md（设定、思辨系统、地理、派系）
+  2. gen_characters.py   → characters.md（创伤 / 欲望 / 需要 / 谎言、口吻、三杆）
+  3. gen_outline.py      → outline.md part 1（节拍、章节结构）
+  4. gen_outline_part2.py → outline.md part 2（伏笔账本）
+  5. 文风发现：以不同语域写 5 段试笔，选最佳，填 voice.md Part 2
+     —— 范文段落 + 反范文段落
+  6. 定 MYSTERY.md（读者将逐渐发现的中心秘密）
+  7. gen_canon.py        → canon.md（交叉核对所有硬事实）
   8. evaluate.py --phase=foundation
-  9. If score improved → git commit. If worse → git reset --hard HEAD~1.
-  10. Identify weakest dimension → target next iteration at it.
+  9. 分数提升 → git commit。下降 → git reset --hard HEAD~1。
+  10. 找出最弱维度 → 下一轮针对它。
 
-Key learnings:
-  - Foundation typically takes 5-15 iterations
-  - The evaluator weights lore interconnection at 40% — magic must
-    affect politics, history must explain factions, geography must
-    shape culture
-  - Cross-layer consistency check on EVERY iteration
-  - Canon should have 400+ entries before exiting foundation
-  - Voice discovery is a separate sub-loop: write trial passages,
-    evaluate, select, refine
+经验要点：
+  - 基础阶段通常需要 5-15 轮
+  - 评估器对**设定互联**加权 40% —— 思辨系统必须影响政治，历史必须解释派系，
+    地理必须塑造文化
+  - 每轮都要做跨层一致性核查
+  - canon 在退出基础阶段前应至少有 400+ 条
+  - 文风发现是**子循环**：写试笔，评估，选定，精修
 ```
 
-### Phase 2: First Draft
+### Phase 2：初稿
 
 ```
-INPUT:  all foundation docs
-OUTPUT: chapters/ch_01.md through ch_NN.md
-EXIT:   all chapters drafted with score > 6.0
+INPUT：所有基础文档
+OUTPUT：chapters/ch_01.md ... ch_NN.md
+EXIT：所有章节起草完毕，每章 score > 6.0
 
-For each chapter in outline order:
-  1. Load context window:
-     - voice.md (full)
-     - world.md (full)
-     - characters.md (full)
-     - This chapter's outline entry
-     - Previous chapter's last ~1000 words
-     - Next chapter's outline (for continuity)
+FOR 每一章（按大纲顺序）：
+  1. 加载上下文：
+     - voice.md（完整）
+     - world.md（完整）
+     - characters.md（完整）
+     - 本章大纲条目
+     - 上一章末 ~1000 字
+     - 下一章大纲（用于连贯）
   2. draft_chapter.py → chapters/ch_NN.md
   3. evaluate.py --chapter=NN
-  4. If score > 6.0 → keep, commit. If < 6.0 → discard, retry (max 5).
-  5. Extract new canon entries from eval output → append to canon.md
-  6. Log to results.tsv
+  4. score > 6.0 → 保留，commit；< 6.0 → 丢弃，重试（最多 5 次）
+  5. 从评估输出中抽取新事实 → 追加到 canon.md
+  6. 记入 results.tsv
 
-Post-draft cleanup:
-  7. Mechanical slop pass (evaluate.py regex scanner) across all chapters
-  8. Fix recurring AI patterns identified in early chapters
-     (these compound — fix them before revision phase)
-  9. Update state.json phase to "revision"
+起草后清理：
+  7. 机械 slop 扫描（evaluate.py 正则）扫所有章节
+  8. 修复早期章节中已识别的 AI 模式（这些模式会**累积** —— 修订前先修它们）
+  9. 把 state.json phase 更新为 "revision"
 
-Key learnings:
-  - Forward progress over perfection. 6.0 is good enough.
-  - Chapters 1-6 score higher than 7-24 (freshness decay).
-    After ch 6, add anti-pattern rules to the writer prompt.
-  - Batch the second half (ch 11+) — it's faster and the quality
-    is consistent enough.
-  - The mechanical slop pass catches ~200 instances of tier-1 banned
-    words, em-dash overuse, and sentence-length uniformity.
-  - Total drafting time: ~8-16 hours of API calls for 25 chapters.
+经验要点：
+  - **前进比完美重要**。6.0 分够了。
+  - 早段（Ch 1-6）通常比后段（7+）分数高（"新鲜感衰减"）。
+    Ch 6 之后给 writer prompt 加更严格的反模式规则。
+  - 后半批量起草（Ch 11+） —— 速度更快，质量足够稳。
+  - 机械 slop 扫描会捕获约 200 处 Tier 1 禁词、双破折号过度、句长齐整。
+  - 起草总时长：25 章约 8-16 小时 API 时间。
 ```
 
-### Phase 3: Revision
+### Phase 3：修订
 
-This is where the real quality happens. 3-6 cycles, each with a
-specific focus. Stop when scores plateau across 2 consecutive cycles.
+真正的质量提升在这里。3-6 个循环，每个循环有具体焦点。**连续 2 个循环分数稳定即停**。
 
 ```
-CYCLE 1: BASELINE & DIAGNOSIS
+循环 1：基线诊断
 
   1. adversarial_edit.py all
-     → edit_logs/chNN_cuts.json for all chapters
-     → Systemic pattern identified (expect OVER-EXPLAIN at ~30-35%)
+     → edit_logs/chNN_cuts.json（所有章节）
+     → 识别系统性模式（OVER-EXPLAIN 通常占 30-35%）
   2. compare_chapters.py
-     → edit_logs/tournament_results.json (Elo rankings)
-  3. Apply top cuts:
-     Focus on OVER-EXPLAIN + REDUNDANT (together ~55-60% of all cuts)
-     Target: chapters with >17% fat
-     Method: automated quote-matching removal
-     Expect to cut ~2000-3000 words (~3-4% of novel)
+     → edit_logs/tournament_results.json（Elo 排名）
+  3. 应用顶层切口：
+     重点：OVER-EXPLAIN + REDUNDANT（合计约 55-60%）
+     目标：脂肪率 > 17% 的章节
+     方法：自动引用匹配删除
+     预期：砍 ~2000-3000 字（约小说 3-4%）
   4. reader_panel.py
      → edit_logs/reader_panel.json
-     4 personas: editor, genre reader, writer, first reader
-     Each answers: momentum_loss, earned_ending, cut_candidate,
-       missing_scene, thinnest_character, best_scene, worst_scene,
-       would_recommend, haunts_you, next_book
-  5. Identify CONSENSUS items (3/4 or 4/4 agreement):
-     These are the revision priorities.
-  6. Git commit: "Cycle 1: adversarial + panel baseline"
+     4 个 persona：编辑、类型读者、作家、普通读者
+     每位回答：推力流失、应得结尾、可砍候选、缺失场景、
+       最薄人物、最佳场景、最弱场景、是否推荐、留下回响、下一本
+  5. 找**共识项**（3/4 或 4/4 同意）：
+     这些是修订优先级。
+  6. git commit："循环 1：对抗式 + 评审团基线"
 ```
 
 ```
-CYCLE 2-3: STRUCTURAL REVISIONS (address panel consensus)
+循环 2-3：结构性修订（处理评审团共识）
 
-  For each consensus item, in priority order:
-    a. CUT CANDIDATE (4/4 agreement):
-       Write compression brief → gen_revision.py
-       Target: cut 40-60% of chapter words
-       Keep: the 2-3 essential beats the panel identified
-       WARNING: don't over-compress. 1700w is too thin for any chapter.
-       Sweet spot: 2200-3000w for a compressed chapter.
+  对每个共识项，按优先级：
+    a. 可砍候选（4/4 同意）：
+       写压缩 brief → gen_revision.py
+       目标：砍掉本章 40-60% 字数
+       保留：评审团识别出的 2-3 个核心节拍
+       警告：**别压缩过度**。任何章节 1700 字以下都太薄。
+       甜点：被压缩章节 2200-3000 字。
 
-    b. MISSING SCENE (4/4 agreement):
-       Write expansion brief → gen_revision.py for the target chapter
-       OR: surgical patch if the scene is <400 words
-       Key: the brief must specify what to KEEP (existing good material)
-       and what to ADD (the missing beat)
+    b. 缺失场景（4/4 同意）：
+       为目标章写扩展 brief → gen_revision.py
+       或：< 400 字的场景做外科补丁
+       要点：brief 必须明确说明**保留**什么（既有的好部分）和**新加**什么
 
-    c. THIN CHARACTER (4/4 agreement):
-       Identify 1-2 existing scenes where the character appears
-       Add a private/unguarded moment the POV character catches
-       Connect to the character's backstory in characters.md
-       DON'T add a new scene — deepen an existing one
+    c. 薄人物（4/4 同意）：
+       找出 1-2 个该人物已出现的场景
+       添加一处主角能捕捉到的私人 / 不设防瞬间
+       连接到 characters.md 中的人物背景
+       **不要**新加场景 —— **深化**已有场景
 
-    d. WEAK SCENE (3/4 agreement):
-       Write dramatization brief → gen_revision.py
-       Change HOW information arrives, not WHAT information
-       Convert "reading a document" → investigation/confrontation
-       Convert "briefing" → confrontation with resistance
+    d. 弱场景（3/4 同意）：
+       写"戏剧化" brief → gen_revision.py
+       改的是**怎么传达信息**，不是**传达什么**
+       把"读文件"变成"调查 / 对峙"
+       把"汇报"变成"带阻力的对峙"
 
-    e. CONSISTENCY / TIMELINE:
-       Search for contradictions (years, ages, sequence of events)
-       Fix in canon.md + all source files + chapter references
-       The 10yr/12yr distinction will happen. Plan for it.
+    e. 一致性 / 时间线：
+       搜矛盾（年代、年龄、事件顺序）
+       修 canon.md + 所有源文件 + 章节引用
+       会出现"10 年 / 12 年"这种差异。预先做好准备。
 
-    f. CHAPTER RENUMBERING:
-       If chapters were merged/deleted, ALL internal titles need updating
-       Use a script, not manual edits
+    f. 章节重编号：
+       如果合并 / 删除了章节，**所有**内部标题都要更新
+       用脚本，不要手动改
 
-  After each structural change:
-    evaluate.py --chapter=N for affected chapters
-    Keep if improved, discard if not
-    Git commit with detailed message
+  每次结构性改动后：
+    evaluate.py --chapter=N（受影响章节）
+    分数提升 → 保留；下降 → 丢弃
+    git commit，写明详细信息
 
-  evaluate.py --full → get novel-level scores
-  Git commit: "Cycle N: structural revisions from panel"
+  evaluate.py --full → 拿小说级分数
+  git commit："循环 N：评审团结构性修订"
 ```
 
 ```
-CYCLE 4-5: TARGETED IMPROVEMENTS (address eval callouts)
+循环 4-5：定向改进（处理评估 callouts）
 
-  evaluate.py --full produces:
-    - weakest_dimension (usually pacing_curve)
+  evaluate.py --full 输出：
+    - weakest_dimension（通常是 pacing_curve）
     - weakest_chapter
-    - top_suggestion (specific fix)
-    - per-dimension scores and commentary
+    - top_suggestion（具体修订建议）
+    - 各维度分数与评语
 
-  Common patterns and fixes:
-    a. PACING (always the stubborn score):
-       - Act II investigation rhythm repetitive →
-         compress the weakest investigation chapter, vary scene types
-       - Act III compressed → expand ally-gathering and climax
-       - Reveals fire too fast → add breathing beats between reveals
-       WARNING: fixing one stretch exposes the next. Pacing=7 may be
-       a structural ceiling for LLM-evaluated novels.
+  常见模式与修法：
+    a. 节奏（pacing，永远的顽固分）：
+       - 第二幕调查节奏重复 →
+         压缩最弱的调查章，变化场景类型
+       - 第三幕被压缩 → 扩展集结与高潮
+       - 揭示太快 → 在揭示之间加"喘息节拍"
+       警告：修一段会暴露下一段。pacing=7 可能是 LLM 评估小说的**结构上限**。
 
-    b. CHAPTER TOO SHORT for structural importance:
-       Write expansion brief → gen_revision.py
-       Target: +800-1500 words
-       Focus: physical accumulation, dread, silence-with-duration
-       The brief should specify WHAT BEATS to expand, not just "make longer"
+    b. 章节相对其结构重要性而言**太短**：
+       写扩展 brief → gen_revision.py
+       目标：+800-1500 字
+       重点：身体堆积、恐惧、有持续时长的沉默
+       brief 必须指明**扩展什么节拍**，而非"写更长"
 
-    c. REPEATED PHRASES across chapters:
-       Search for the phrase across all chapters
-       Change all but the most impactful instance
-       Common AI repeats: opening descriptions, emotional formulas,
-       "the way [X] did [Y]", triadic lists
+    c. 跨章节重复短语：
+       搜索短语在所有章节中的出现
+       把除最有冲击力的实例外的所有改写
+       常见 AI 重复：开篇描写、情感公式、"那种 X 的方式"、三件套
 
-    d. UNRESOLVED THREADS:
-       Check foreshadowing ledger in outline.md
-       Add resolution beats where threads were planted but never harvested
-       Surgical patches, not full rewrites
+    d. 未回收线索：
+       检查 outline.md 中的伏笔账本
+       在已植入但未回收的位置加回收节拍
+       外科补丁，非全章重写
 
-  After fixes:
-    evaluate.py --full → check scores improved
-    If weakest_chapter changed → previous fix worked
-    If scores unchanged after 2 cycles → stop, diminishing returns
+  修后：
+    evaluate.py --full → 检查分数提升
+    weakest_chapter 变了 → 上一轮修对了
+    连续 2 轮分数无变化 → 停，边际收益递减
 ```
 
 ```
-CYCLE 6: POLISH (final pass)
+循环 6：抛光（终轮）
 
-  1. adversarial_edit.py all → fresh cut data on rewritten chapters
-  2. Apply cuts from chapters that were rewritten in cycles 2-5
-  3. Slop pass: evaluate.py per-chapter on rewritten chapters
-  4. reader_panel.py → final validation
-  5. Rebuild founding docs
+  1. adversarial_edit.py all → 在重写章节上拿到新切口数据
+  2. 应用循环 2-5 中重写过的章节的切口
+  3. Slop pass：evaluate.py 单章扫描重写章节
+  4. reader_panel.py → 终验
+  5. 重建 founding 文档
 ```
 
 ```
-PHASE 3b: OPUS REVIEW LOOP (deep, prose-level refinement)
+PHASE 3b：OPUS 评审循环（深度散文级精修）
 
-  After the automated cycles, switch to Opus for the final quality push.
-  This is the evaluation that actually catches prose problems, structural
-  repetition, character thinness, and ethical gaps.
+  自动循环之后，切到 Opus（或同档评审模型）做最后的质量推进。
+  这是真正能捕捉到散文问题、结构性重复、人物浅薄、伦理空白的评估。
 
-  Tool: review.py
-  Model: Claude Opus (the best available for literary analysis)
-  Prompt: "Read the below novel. Review it first as a literary critic
-    (like a newspaper book review) and then as a professor of fiction.
-    In the later review, give specific, actionable suggestions for any
-    defects you find. Be fair but honest. You don't *have* to find defects."
+  工具：review.py
+  模型：Claude Opus（文学分析当前最佳）
+  Prompt：
+    "阅读下面这部中文长篇小说《{title}》。先以**文学评论家**身份评论
+     （报纸书评的风格），再以**文学教授**身份给出针对具体瑕疵的、
+     **可执行**的修改建议。公允但诚实。你不一定要找瑕疵。"
 
-  Loop (max 4 rounds):
+  循环（最多 4 轮）：
     1. review.py --output reviews.md
-       Sends full manuscript to Opus. Gets dual-persona review.
+       发整本到 Opus。拿双角色评审。
     2. review.py --parse
-       Extracts actionable items, severity, type.
-       Classifies items: major/moderate/minor, qualified/unqualified.
-    3. STOPPING CONDITION:
-       Stop if: no major unqualified items remain
-       Stop if: >50% of items are qualified/hedged
-       Stop if: ≤2 items found
-       These signals mean the reviewer is running out of real problems.
-    4. Address top items:
-       - gen_brief.py --auto → picks weakest chapter, generates brief
-       - gen_revision.py → rewrites chapter from brief
-       - Mechanical fixes (apply_cuts.py) for pattern issues
-       - Surgical patches for targeted additions
-    5. Commit, repeat.
+       抽取可执行项、严重度、类型。
+       把项分类：major / moderate / minor，qualified / unqualified。
+    3. **停止条件**：
+       停 if：无重大未边际化项
+       停 if：> 50% 项已被边际化（hedged）
+       停 if：≤ 2 项
+       这些信号意味着评审者已找不到真正的问题。
+    4. 处理顶项：
+       - gen_brief.py --auto → 选最弱章，生成 brief
+       - gen_revision.py → 按 brief 重写章节
+       - 机械修复（apply_cuts.py）处理模式问题
+       - 外科补丁处理定向新增
+    5. commit，重复。
 
-  Key learnings from the Bells production (6 review rounds):
-    - The same issues surface repeatedly until fixed (middle pacing,
-      tics, character depth). This is the signal to act.
-    - When the language shifts from "the novel has problems" to
-      "these are the costs of ambition" → stop revising.
-    - The reviewer will ALWAYS find something. The stopping condition
-      is about severity and qualification, not zero defects.
-    - Items that persist across 3+ rounds may be structural to the
-      novel's voice/approach, not bugs. Learn to accept them.
-    - The reviewer's item severity is the guide:
-      multiple major items → structural work needed
-      few major, some moderate → targeted revisions, 2-3 more rounds
-      all moderate/minor → polish only, 1-2 more rounds
-      mostly qualified hedges → done, ship it
+  经验要点（来自原版项目的 6 轮评审）：
+    - 同样的问题会**反复出现**直到被修。这是行动信号。
+    - 当语言从"小说有问题"转向"这些是雄心的代价" → 停止修订。
+    - 评审者**总会**找到些什么。停止条件是关于**严重度与边际化**，
+      不是零瑕疵。
+    - 持续出现 3+ 轮的项可能是**小说声音 / 路径的结构性产物**，不是 bug。
+      学会接受它们。
+    - 评审者的项严重度是指南：
+      多个重大项 → 需要结构性工作
+      少数重大、若干 moderate → 定向修订，再 2-3 轮
+      全部 moderate / minor → 仅抛光，再 1-2 轮
+      多为边际化 → 完成，发吧
 ```
 
-### Phase 4: Export
+### Phase 4：导出
 
 ```
-  1. Normalize chapter titles (all # level, consistent format)
-  2. typeset/build_tex.py → chapters_content.tex
-  3. Edit typeset/novel.tex:
-     - Set title, author name
-     - Choose epigraph (from novel text, NOT a spoiler)
-     - Set end-page text
-  4. tectonic novel.tex → novel.pdf
-  5. Git commit: "Export: [title] — [word count] words"
+1. 规范章节标题（所有 # 层级，统一格式）
+2. typeset/build_tex.py → chapters_content.tex
+3. 编辑 typeset/novel.tex：
+   - 设标题、作者
+   - 选题词（来自小说本身，不剧透）
+   - 设末页文字
+4. xelatex novel.tex → novel.pdf（中文需要 xelatex 而非 tectonic）
+5. git commit："Export：[书名] —— [字数] 字"
 ```
 
 ---
 
-## KEY LEARNINGS (from the Bells production)
+## 关键经验
 
-### What the evaluator rewards
-  - Theme coherence hits ceiling (10) early if the seed has a strong
-    central question. Build the magic system AS the theme.
-  - Voice consistency (9) holds if you never break POV and keep the
-    craft vocabulary native.
-  - Foreshadowing (9) requires a ledger maintained from foundation
-    through drafting. Every plant needs a payoff.
+### 评估器奖赏什么
 
-### What the evaluator penalizes
-  - Pacing (7) is structurally stubborn. Investigation chapters
-    (go-learn-blocked) repeat a rhythm that the evaluator catches.
-    Fix one stretch, it finds the next. Accept 7 as the likely ceiling
-    unless you restructure the plot.
-  - OVER-EXPLAIN is the #1 AI writing pattern (~32% of adversarial cuts).
-    The narrator explains what scenes already showed. Cut aggressively.
-  - REDUNDANT is #2 (~26%). Same insight restated 3-4 times. Once is enough.
+- **主题一致性**触顶（10）较早，如果种子有强中心问题。把思辨系统**做成**主题。
+- **文风一致性**（9）保持，如果你**从不**违反 POV 且让叙事词汇本土化。
+- **伏笔**（9）需要从基础到起草都维护账本。每根植入都要有兑现。
 
-### What the reader panel catches that the evaluator doesn't
-  - "Checklist of yeses" — when allies all agree without friction
-  - Missing emotional scenes between key characters
-  - Characters who are "more mechanism than person"
-  - Scenes that need to be messier, more human, less choreographed
-  - The difference between a scene that "works" and one that "lives"
+### 评估器扣什么
 
-### Dangerous patterns
-  - Over-compressing: cutting a chapter below 1800w makes it the new
-    weakest. Sweet spot is 2200-3000w for compressed chapters.
-  - Expansion bloat: gen_revision.py adds ~30% more words than briefed.
-    A brief targeting 3200w will produce 3800-4200w.
-  - Score chasing: after cycle 4, fixing one score often drops another.
-    Arc went 9→8→9 when we over-compressed Ch 11.
-  - The evaluator rotates "weakest chapter" — chasing it is whack-a-mole.
-    After 2 rotations, stop.
+- **节奏**（7）是结构性顽固分。调查类章节（去-学-被堵）的节奏会被评估器抓到。
+  修一段，它发现下一段。除非重构剧情，**接受 7 是上限**。
+- **OVER-EXPLAIN** 是 #1 AI 写作模式（约 32% 的对抗式切口）。叙述者解释场景已展示的事。**砍**。
+- **REDUNDANT** 是 #2（约 26%）。同一洞察重述 3-4 次。一次就够。
+- **中文专属**：成语堆 / ABB 副词病 / 心眸唇眉四件套 / "X 道"对话标记滥用 / 翻译腔。
+  详见 ANTI-SLOP.md。
 
-### Timeline estimates
-  Phase 1 (Foundation):    2-4 hours API time, 5-15 iterations
-  Phase 2 (First Draft):   8-16 hours API time, 23-30 chapters
-  Phase 3 (Revision):      4-8 hours API time, 3-6 cycles
-  Phase 4 (Export):         30 minutes
-  TOTAL:                    ~15-30 hours API time for a 75k word novel
+### 评审团能捕捉到评估器抓不住的
 
----
+- "勾选式同意" —— 盟友们没有摩擦地全部同意
+- 关键人物之间缺失的情绪场景
+- "更像机器而不像人"的人物
+- 应当更乱、更人、更少编排的场景
+- "工作"与"活着"之间的差别
 
-## WHAT NEEDS BUILDING FOR FULL AUTOMATION
+### 危险模式
 
-### Already exists (on branch, needs merge to master):
-  - gen_revision.py
-  - reader_panel.py
-  - build_arc_summary.py
-  - build_outline.py
-  - voice_fingerprint.py
-  - typeset/novel.tex + build_tex.py
+- **过度压缩**：把章节砍到 1800 字以下会让它成为新的最弱。甜点是 2200-3000 字。
+- **扩展膨胀**：gen_revision.py 加的字数比 brief 多约 30%。目标 3200 字 → 实际 3800-4200 字。
+- **追分**：循环 4 之后，修一个分数往往让另一个掉下来。
+- 评估器**轮流**说"weakest chapter" —— 追它是打地鼠。轮 2 次后，停。
 
-### Needs building:
-  1. run_pipeline.py — Orchestrator that runs all phases
-     - Phase 1: loop foundation generation + evaluation
-     - Phase 2: sequential drafting with retry logic
-     - Phase 3: revision cycles with automated brief generation
-     - Phase 4: export
-     - Score plateau detection (stop when Δ < 0.5 across 2 cycles)
-     - Automated brief writing from panel feedback + eval callouts
+### 时间估计
 
-  2. gen_brief.py — Auto-generate revision briefs from structured feedback
-     Input: panel JSON + eval JSON + chapter text
-     Output: a revision brief (.md) suitable for gen_revision.py
-     This is the key automation gap — currently briefs are hand-written.
-
-  3. apply_cuts.py — Batch cut applicator
-     Input: edit_logs/chNN_cuts.json
-     Output: patched chapter files
-     Filters by cut type (OVER-EXPLAIN, REDUNDANT)
-     Handles quote-matching failures gracefully
-
-  4. Clean master branch:
-     - Merge tools from branch (gen_revision, reader_panel, etc.)
-     - Strip story-specific content from template files
-     - Add .env.example
-     - Update WORKFLOW.md to reference PIPELINE.md
-     - Update README.md with the full automation story
+| 阶段 | API 时间 |
+|---|---|
+| Phase 1（基础） | 2-4 小时，5-15 轮 |
+| Phase 2（初稿） | 8-16 小时，23-30 章 |
+| Phase 3（修订） | 4-8 小时，3-6 个循环 |
+| Phase 4（导出） | 30 分钟 |
+| **总计** | **~15-30 小时**（75k 字小说） |
 
 ---
 
-## THE ORCHESTRATOR (run_pipeline.py spec)
+## Orchestrator（run_pipeline.py 规范）
 
 ```python
-# Pseudocode for the fully automated pipeline
+# 完整自动化流水线伪代码
 
 def run_pipeline(seed_path, tag="run1"):
     setup(tag, seed_path)
-    
+
     # Phase 1
     while state.foundation_score < 7.5 or state.lore_score < 7.0:
         weakest = evaluate_foundation()
@@ -475,9 +416,9 @@ def run_pipeline(seed_path, tag="run1"):
             state.foundation_score = score
         else:
             reset()
-    
+
     state.phase = "drafting"
-    
+
     # Phase 2
     for ch in range(1, state.chapters_total + 1):
         for attempt in range(5):
@@ -489,18 +430,18 @@ def run_pipeline(seed_path, tag="run1"):
             else:
                 reset()
         mechanical_slop_pass(ch)
-    
+
     state.phase = "revision"
-    
+
     # Phase 3
     prev_score = 0
     for cycle in range(1, 7):
-        # Diagnosis
+        # 诊断
         cuts = adversarial_edit_all()
         apply_top_cuts(cuts, types=["OVER-EXPLAIN", "REDUNDANT"])
         panel = run_reader_panel()
-        
-        # Structural fixes
+
+        # 结构性修订
         for item in panel.consensus_items():
             brief = generate_brief(item, panel, cuts)
             revise_chapter(item.chapter, brief)
@@ -508,19 +449,19 @@ def run_pipeline(seed_path, tag="run1"):
                 commit(f"cycle {cycle}: {item.type}")
             else:
                 reset()
-        
-        # Full evaluation
+
+        # 全本评估
         score = evaluate_full()
         if abs(score - prev_score) < 0.5 and cycle >= 3:
-            break  # plateau
+            break  # 平台期
         prev_score = score
-        
-        # Targeted fixes from eval
+
+        # 评估 callouts 的定向修订
         fix_eval_callouts(score.top_suggestion)
         slop_pass(rewritten_chapters)
-        
-        commit(f"Cycle {cycle} complete: score {score}")
-    
+
+        commit(f"循环 {cycle} 完成：分数 {score}")
+
     # Phase 4
     rebuild_docs()
     typeset()
@@ -529,6 +470,4 @@ def run_pipeline(seed_path, tag="run1"):
 
 ---
 
-*This pipeline was derived from 60+ commits, 5 revision cycles,
-2 reader panels, 2 adversarial edits, and ~20 hours of agent time
-producing a 75,000-word fantasy novel.*
+*本流水线源自原版项目 60+ 次提交、5 个修订循环、2 次评审团、2 次对抗式编辑、约 20 小时 agent 时间产出 75,000 字奇幻长篇的实战经验，并针对中文小说写作做了完整的 prompt、slop 词表、文档与排版重新校准。*

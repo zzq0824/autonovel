@@ -4,7 +4,7 @@ title: ""
 
 \
 
-*This is a work of fiction created by Hermes Agent.*
+*本书为虚构作品，由 autonovel 流水线自动产出。*
 
 \
 

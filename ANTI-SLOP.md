@@ -1,345 +1,212 @@
-# ANTI-SLOP REFERENCE
+# ANTI-SLOP：识别中文 AI 写作的统计性露馅信号
 
-A field guide to AI-generated writing patterns. Use this to catch and kill slop in any text.
+本文件是 `evaluate.py` 中机械 slop 扫描器的人类可读版。两边内容应当**保持同步** —— 如果你修改了禁词表，两个文件都要改。
 
-"Slop" = text that reads like unedited LLM output. Low information density, predictable structure, and vocabulary no human would reach for. The word became [Macquarie Dictionary's 2025 word of the year](https://theconversation.com/slop-vibe-coding-and-glazing-ai-dominates-2025s-words-of-the-year-269688).
-
----
-
-## BANNED WORDS AND PHRASES
-
-These words are statistically overrepresented in LLM output vs. human writing, per the [slop-forensics](https://github.com/sam-paech/slop-forensics) analysis and [EQ-Bench Slop Score](https://eqbench.com/slop-score.html). Not every use is wrong, but clusters of these are a dead giveaway.
-
-### Tier 1: Kill on sight
-
-These almost never appear in casual human writing. If you see one, rewrite the sentence.
-
-| Slop word | What a human would write |
-|---|---|
-| delve | dig into, look at, examine |
-| utilize | use |
-| leverage (verb) | use, take advantage of |
-| facilitate | help, enable, make possible |
-| elucidate | explain, clarify |
-| embark | start, begin |
-| endeavor | effort, try |
-| encompass | include, cover |
-| multifaceted | complex, varied |
-| tapestry | (just don't. describe the actual thing.) |
-| testament (as in "a testament to") | shows, proves, demonstrates |
-| paradigm | model, approach, framework |
-| synergy / synergize | (delete the sentence and start over) |
-| holistic | whole, complete, full-picture |
-| catalyze / catalyst | trigger, cause, spark |
-| juxtapose | compare, contrast, set against |
-| nuanced (as filler) | (cut it. if the thing is nuanced, show how.) |
-| realm | area, field, domain |
-| landscape (metaphorical) | field, space, situation |
-| tapestry of | (always delete) |
-| myriad | many, lots of |
-| plethora | many, a lot |
-
-### Tier 2: Suspicious in clusters
-
-Fine in isolation. Three in one paragraph = rewrite.
-
-| Slop word | Plainer alternative |
-|---|---|
-| robust | strong, solid, reliable |
-| comprehensive | complete, thorough, full |
-| seamless / seamlessly | smooth, easy, without friction |
-| cutting-edge | new, latest, modern |
-| innovative | new, original, clever |
-| streamline | simplify, speed up |
-| empower | let, help, give (someone) the ability |
-| foster | encourage, grow, support |
-| enhance | improve, boost |
-| elevate | raise, improve |
-| optimize | improve, tune, tweak |
-| scalable | grows with you, handles more load |
-| pivotal | important, key, central |
-| intricate | complex, detailed |
-| profound | deep, significant |
-| resonate | connect with, hit home |
-| underscore | highlight, stress, show |
-| harness | use, put to work |
-| navigate (metaphorical) | deal with, work through, handle |
-| cultivate | build, grow, develop |
-| bolster | strengthen, support |
-| galvanize | motivate, push, rally |
-| cornerstone | foundation, basis, core |
-| game-changer | (be specific about what changed) |
-
-### Tier 3: Filler phrases that add zero information
-
-These are verbal tics. LLMs insert them reflexively. Delete them.
-
-| Phrase | What to do |
-|---|---|
-| "It's worth noting that..." | Just state the thing. |
-| "It's important to note that..." | Just state the thing. |
-| "Importantly, ..." | Just state the thing. |
-| "Notably, ..." | Just state the thing. |
-| "Interestingly, ..." | Just state the thing. (If it's interesting, readers will notice.) |
-| "Let's dive into..." | (Delete. Start with the content.) |
-| "Let's explore..." | (Delete. Start with the content.) |
-| "In this section, we will..." | (Delete. The section heading already says this.) |
-| "As we can see..." | (Delete. They can see.) |
-| "As mentioned earlier..." | (Delete or just reference the thing directly.) |
-| "In conclusion, ..." | (Delete. The reader knows it's the end.) |
-| "To summarize, ..." | (Delete or just... summarize.) |
-| "Furthermore, ..." | and, also, (or just start a new sentence) |
-| "Moreover, ..." | also, and, plus |
-| "Additionally, ..." | also, and |
-| "In today's [fast-paced/digital/modern] world..." | (Delete the whole clause.) |
-| "At the end of the day..." | (Delete.) |
-| "It goes without saying..." | (Then don't say it.) |
-| "Without further ado..." | (Delete.) |
-| "When it comes to..." | (Rewrite: just talk about the thing.) |
-| "In the realm of..." | in |
-| "One might argue that..." | (Either argue it or don't.) |
-| "It could be suggested that..." | (Say it or don't.) |
-| "This begs the question..." | (Almost always misused anyway. Delete.) |
-| "A [comprehensive/holistic/nuanced] approach to..." | an approach to |
-| "Not just X, but Y" | (Restructure. This is the #1 LLM rhetorical crutch.) |
+> "Slop" —— 来自 Macquarie Dictionary 2025 年度词。
+> 本来指模糊、千篇一律、缺乏个性的 AI 生成内容。
+> 中文里的 slop 与英文形态不同，但同样**统计可识别**。
 
 ---
 
-## STRUCTURAL SLOP PATTERNS
+## Tier 1：见即必删（统计意义上的 AI 露馅词）
 
-Slop isn't just vocabulary. The skeleton of the writing betrays it.
+这些词在 LLM 中文输出里**严重过度使用**。一旦出现，重写整句。无例外。
 
-### The "topic sentence" machine
+```
+璀璨、斑斓、波光粼粼、金光闪闪、炯炯有神、深邃
+绝美、惊鸿、举世无双、举足轻重、不容忽视
+淋漓尽致、栩栩如生、跃然纸上、鳞次栉比
+川流不息、络绎不绝、一应俱全、五光十色
+美轮美奂、登峰造极、巧夺天工、叹为观止
+气势磅礴、蔚为壮观
+```
 
-LLMs default to a rigid paragraph template: **topic sentence -> elaboration -> example -> wrap-up**. Every paragraph. Same rhythm. Human writing varies: sometimes the point comes last, sometimes there's no explicit topic sentence, sometimes a paragraph is one line.
+替换原则：
 
-**Slop:**
-> Error handling is a crucial aspect of software development. When errors occur, they can lead to unexpected behavior and poor user experience. For example, an unhandled null pointer exception might crash the entire application. Therefore, implementing proper error handling is essential for building reliable software.
+| 必删 | 改用 |
+|------|------|
+| 璀璨 | 写出具体的光感（金、白炽、磷、烛火、月色、霜白） |
+| 斑斓 | 把颜色一一说出来（朱红、绛紫、墨绿、靛青） |
+| 波光粼粼 | 写水面具体怎么动（裂、皱、晃、抖、被风划开一道） |
+| 金光闪闪 | 是金子还是黄铜？阳光从哪个角度落下？ |
+| 鳞次栉比 | 数它们 / 比喻它们，不要套用成语 |
+| 栩栩如生 / 跃然纸上 | （评语，不是描写。删） |
+| 美轮美奂 / 气势磅礴 | （评价词。让事实自己说话） |
+| 不容忽视 / 举足轻重 | （议论文用语，不是小说语言） |
 
-**Human:**
-> Your app will crash. Not "might crash" -- it will. The question is whether you wrote a try/catch or whether your user gets a stack trace at 2 AM.
+## Tier 2：集群可疑（ABB 副词病 / 网文填料）
 
-### List abuse
+单独使用没问题。**同一段三个以上 = 重写整段**。
 
-LLMs love bulleted lists. They use them where prose would be clearer, where a table would be better, and where a single sentence would suffice. Watch for:
+```
+缓缓、悠悠、淡淡、微微、轻轻、深深、紧紧
+渐渐、默默、静静、幽幽、袅袅、淙淙
+潺潺、凛冽、清冷、肃穆、庄严、凝重
+复杂、微妙、意味深长
+```
 
-- Lists where every item starts with the same grammatical structure ("Ensures...", "Provides...", "Enables...")
-- Lists used as a substitute for actually explaining something
-- Lists nested 3+ levels deep
-- Lists of exactly 3 or 5 items (LLMs gravitate to these counts)
+中文 AI 倾向于在每个动词前都贴一个副词。常见灾难句式：
 
-### Symmetry addiction
+> 她**缓缓**抬起头，**淡淡**看了一眼远方，**微微**叹了口气。
 
-AI text tends toward suspicious balance. Three pros, three cons. Five steps. Equal-length sections. Real writing is lumpy. Some sections are long because the topic is complex. Some are two sentences because that's all there is to say.
+直接动词更有力：
 
-### The hedge parade
+> 她抬头看远方，叹了口气。
 
-LLMs hedge constantly: "can", "may", "might", "could potentially", "it's possible that". Human experts state things. If you know it, say it. If you don't, say you don't.
+## Tier 3：套话填充语（见即删）
 
-**Slop:** "This approach may potentially help improve performance in some cases."
-**Human:** "This is faster." (or "We haven't benchmarked this yet.")
-
-### Transition word addiction
-
-If every paragraph starts with a transition word, the text is probably AI. Scan paragraph openings:
-
-- "However, ..."
-- "Furthermore, ..."
-- "Additionally, ..."
-- "Moreover, ..."
-- "Consequently, ..."
-- "Nevertheless, ..."
-
-Human writers don't chain these. They start paragraphs with the actual subject.
-
-### The "not just X, but Y" construction
-
-This is the single most overused rhetorical pattern in LLM output. It appears in nearly every model's top trigram lists per [slop-forensics](https://github.com/sam-paech/slop-forensics). Kill it.
-
-**Slop:** "This isn't just a tool -- it's a paradigm shift in how we think about development."
-**Human:** "This tool changes how we develop." (or better: show how, specifically)
-
-### Em dash overload
-
-LLMs overuse em dashes (--) where humans would use commas, parentheses, or just write two sentences. One or two em dashes per page is fine. Five per paragraph is a tell. [Source](https://arxiv.org/html/2509.19163v1)
-
-### Sycophantic openings
-
-Watch for responses that start by praising the question or rephrasing it:
-
-- "Great question!"
-- "That's an excellent point."
-- "Absolutely! Let me explain..."
-- "You raise an important consideration."
-
-This is called "glazing" -- excessive flattery. [Collins Dictionary shortlisted it for 2025 word of the year](https://phys.org/news/2025-12-slop-vibe-coding-glazing-ai.html).
-
-### The false-depth pattern
-
-LLMs simulate depth by:
-1. Restating the problem in fancier words
-2. Listing obvious considerations
-3. Concluding with a vague call to action or "it depends"
-
-None of this adds information. Real depth comes from specific details, data, edge cases, and hard-won experience.
+```
+"值得注意的是 / 值得一提的是" → 直接说
+"归根结底 / 综上所述 / 总而言之" → 删整句开头
+"众所周知 / 不言而喻 / 显而易见" → 那就别说了
+"毋庸置疑" → 你确认就别用副词强化
+"由此可见" → 让前一句自己说
+"在某种意义上 / 从某种程度上讲" → 要么明确意义，要么删
+"不仅...而且" → 拆成两句
+"一方面...另一方面" → 议论文体，不是小说体
+"在...之下" / "对...而言" / "就...来说" → 翻译腔
+```
 
 ---
 
-## TONE GUIDELINES BY CONTEXT
+## 中文小说**结构性** slop 模式
 
-### Academic paper
+这些是中文 AI 写作里**特有的形状**。比英文版的"段落模板机"更要紧。
 
-**Goal:** Dense, precise, every claim backed by citation. No performative enthusiasm.
+### 对仗病
 
-| DO | DON'T |
-|---|---|
-| "We observed a 12% reduction in loss (Table 2)." | "We observed a significant and noteworthy reduction in loss." |
-| "This contradicts prior work [3]." | "Interestingly, this finding challenges the conventional wisdom." |
-| "The method fails on sequences longer than 512 tokens." | "While the method performs well in many cases, there may be limitations with longer sequences." |
-| State findings directly. Short sentences. | Hedge with "may", "might", "could potentially" unless genuinely uncertain. |
-| Use field-specific jargon precisely. | Use fancy words for their own sake ("utilize" instead of "use"). |
-| "Prior work shows X [ref]. We show Y." | "It is worth noting that previous research has delved into this area extensively." |
+四字句、对偶、排比连用 —— 像八股不像小说。AI 容易这样写：
 
-### Blog post
+> 春风化雨，润物无声；冬雪覆山，万籁俱寂。
 
-**Goal:** Has a voice. Opinionated. Uses "I" and "we". Can be funny. Reads like a person wrote it, because a person did.
+把骈句拆开，让它呼吸：
 
-| DO | DON'T |
-|---|---|
-| "I spent two days debugging this. Here's what I found." | "In this comprehensive guide, we will explore the intricacies of debugging." |
-| "This is broken and everyone knows it." | "While there are certainly areas for improvement, the current approach has its merits." |
-| Start with the punchline. | Warm up for three paragraphs before getting to the point. |
-| Use contractions. Write how you talk. | Write like you're defending a thesis. |
-| Have opinions. Be wrong sometimes. | Present perfectly balanced "on the other hand" takes on everything. |
+> 春天的雨下得轻。冬天的雪压住整座山，连鸟都不叫。
 
-### README
+### "道"字滥用
 
-**Goal:** Get the reader from zero to running as fast as possible. Terse. Show, don't describe.
+现代中文小说传统**极少**用 "X 道" 做对话标记。每章合计 ≤ 2 处。默认裸引号 + 动作。
 
-| DO | DON'T |
-|---|---|
-| `pip install thing && thing run` | "To get started with this powerful tool, first ensure you have Python installed..." |
-| Show a code example in the first 10 lines. | "This comprehensive library provides a robust set of tools for..." |
-| "Requires Python 3.10+." | "This project leverages cutting-edge Python features." |
-| Bullet the 3 things it does. | Write a 4-paragraph intro about why the project exists. |
-| Link to docs for details. | Put all the docs in the README. |
+❌：
+> "我不知道，"她**说道**。
+> "我也不知道，"他**答道**。
+> "那我们走吧，"她**又说道**。
 
-### Notebook / tutorial
+✅：
+> "我不知道。"她把手插进口袋。
+> "我也不知道。"
+> 她朝门口走了一步。"那走吧。"
 
-**Goal:** Like talking to a colleague at a whiteboard. Informal but precise. Show your reasoning, not just results.
+### 副词病（ABB + 地 + 动词）
 
-| DO | DON'T |
-|---|---|
-| "Here's the weird part --" | "In this fascinating section, we will explore an unexpected finding." |
-| "The loss is still garbage. Let's try dropout." | "The results suggest that further optimization may be beneficial." |
-| "I expected X. Got Y. That's strange." | "Interestingly, the results deviate from our initial hypothesis." |
-| Write like you're pair programming. | Write like you're presenting at a conference. |
-| Leave mistakes and corrections visible. | Present a clean linear narrative like everything worked first try. |
+「**深深地**凝视 / **紧紧地**握住 / **缓缓地**走来 / **悄悄地**靠近」—— 中文里比英文更显套路。第一次写出来时立即检查能否删除"地+副词"，让动词独立。
 
----
+### 三联句病
 
-## AI DETECTION SIGNALS
+「他**不是** X，**不是** Y，也**不是** Z」「**既** X，**又** Y，**更** Z」「**一**...**二**...**三**...」—— AI 最爱的对仗节奏。允许偶尔使用（每章 ≤ 1 次），不允许成为段落结构默认。
 
-What detection tools actually look for, based on [Pangram](https://www.pangram.com/research/how-it-works), [GPTZero](https://gptzero.me/), and academic research.
+### 句长齐整
 
-### Statistical signals
+每句都是 12-18 字 = 合成感。混入 4 字断句、25+ 字长句、对话片段。读出声，听节奏。
 
-| Signal | What it means |
-|---|---|
-| **Low perplexity** | Text is predictable. Each word is what a model would most likely predict next. Human writing is more surprising. Threshold: perplexity < 50 flags synthetic. |
-| **Low burstiness** | Sentence lengths are uniform. Humans mix short punchy sentences with long winding ones. AI stays in a narrow band. Measured as coefficient of variation in sentence length. |
-| **Uniform entropy** | Information density stays constant. Humans write dense paragraphs and sparse ones. AI maintains steady density throughout. |
-| **Token probability patterns** | Pangram tokenizes text and checks if word choices consistently align with what a language model's probability distribution would predict. |
+### 段落模板机
 
-### Vocabulary signals
+开头 - 展开 - 例证 - 收束 = 议论文段落，不是小说段落。小说段落应当长短不齐 —— 有时一句一段，有时三段连起来不分行。
 
-| Signal | What it means |
-|---|---|
-| **Slop word frequency** | [EQ-Bench slop score](https://eqbench.com/slop-score.html) tracks words overrepresented in LLM output vs. human text. Weighted 60% of their composite metric. |
-| **Low vocabulary diversity** | LLMs reuse the same words more than humans. Measured by MATTR (Moving Average Type-Token Ratio). |
-| **Trigram overrepresentation** | Three-word phrases that appear way more in AI text than human text. Weighted 15% of slop score. |
+### "心 / 眸 / 唇 / 眉" 四件套
 
-### Structural signals
+中文 AI 写人最爱用这四个部位 ——「**心**一颤」「**眸**光闪」「**唇**微抿」「**眉**紧锁」。每章合计 ≤ 3 次。
 
-| Signal | What it means |
-|---|---|
-| **Consistent paragraph template** | Same structure repeated across paragraphs. |
-| **List-heavy formatting** | Markdown bullet lists where prose would be natural. |
-| **Balanced section lengths** | Suspiciously even distribution of content across sections. |
-| **Opening/closing formulae** | "In this article..." / "In conclusion..." |
-| **Missing personal markers** | No "I", no anecdotes, no specific experiences, no mistakes. |
+灾难句式：
 
-### What Pangram specifically does
+> 她**心**头一颤，**眸**光流转，**唇**角微微上扬，**眉**心却又轻蹙起来。
 
-[Pangram](https://www.pangram.com/) uses a deep learning classifier (not perplexity/burstiness heuristics) trained on ~1M documents. It:
-1. Tokenizes input text
-2. Creates embeddings for each token
-3. Runs a classifier that outputs human/AI/AI-assisted probability
-4. Highlights specific phrases with elevated AI-signal probability
+### 翻译腔句式
 
-It flags phrases that are statistically more common in AI output and tells you *how much* more common. [Technical report](https://arxiv.org/html/2402.14873v3).
+「**在**...**之下**」「**对**...**而言**」「**就**...**来说**」「**作为**...**的**...」「我**必须**承认 / 我**不得不**...」—— 中文 AI 文体里常常混入英文小说的句式痕迹。读出声，听起来像翻译稿就重写。
 
-### Limitations
+### "心眸唇眉之外的"老套
 
-- All detectors have non-trivial false positive rates
-- Short texts (< 100 words) are unreliable to classify
-- Newer models are harder to detect than older ones
-- Non-native English writers get flagged more often (perplexity-based tools are biased)
-- Paraphrased/edited AI text is much harder to detect
-- Heavy LLM users can spot AI text ~90% of the time; tools do worse ([source](https://arxiv.org/html/2509.19163v1))
+- "倒吸一口冷气 / 凉气" —— 网文专用震惊。删。
+- "心头一颤 / 一紧 / 一沉 / 一凛" —— 一章 ≤ 1 次。
+- "嘴角微微上扬 / 勾起一抹弧度" —— 描述微笑请用更具体的：嘴角往一边歪 / 露出一颗虎牙 / 没忍住先笑了一声。
+- "目光如炬 / 灼灼 / 凌厉 / 深邃" —— 评价词。改写成"看了她很久"或者具体描写眼神动了几下。
+- "乌黑长发如瀑布般垂落" —— 言情陈词。要么不写头发，要么把"瀑布"换成更接近这个人的具体物（油 / 雨 / 帘子 / 一束麻）。
+
+### "忍不住 / 不由地 / 下意识地 / 不禁"
+
+作者解释角色"为什么动作"的拐杖词。删，让动作自己解释。
+
+### 三连"的"
+
+「她的母亲的朋友的女儿」—— 中文 AI 偏爱"的的"层叠。**连续三个"的"**就要重写。
 
 ---
 
-## THE ANTI-SLOP CHECKLIST
+## 调性建议（按场景分）
 
-Run through this after writing or editing any text.
-
-### Word-level
-
-- [ ] Search for Tier 1 banned words. Replace or delete every one.
-- [ ] Search for Tier 2 words. If 3+ appear in one paragraph, rewrite.
-- [ ] Search for Tier 3 filler phrases. Delete all of them.
-- [ ] Count em dashes. More than 2 per page? Cut some.
-- [ ] Count "not just X, but Y" constructions. Kill them.
-
-### Sentence-level
-
-- [ ] Read the first word of every sentence in a paragraph. If they're all transitions ("However", "Additionally", "Moreover"), rewrite.
-- [ ] Check sentence length variation. If every sentence is 15-25 words, mix in some short ones. And some long ones.
-- [ ] Look for hedging chains ("may potentially", "could possibly"). State things or don't.
-
-### Paragraph-level
-
-- [ ] Does every paragraph follow the same template? Break the pattern.
-- [ ] Are all paragraphs roughly the same length? Vary them.
-- [ ] Does the text have a voice? Could you tell who wrote it? If not, add personality.
-
-### Structure-level
-
-- [ ] Are sections suspiciously balanced in length? Real topics aren't symmetric.
-- [ ] Is there list abuse? Convert some lists to prose.
-- [ ] Does it start with throat-clearing ("In today's world...", "As we all know...")? Cut to the point.
-- [ ] Does it end with a generic call to action or "In conclusion"? End with your actual last point.
-
-### The smell test
-
-- [ ] Read it aloud. Does it sound like a person talking? Or a corporate press release?
-- [ ] Would you be embarrassed if someone asked "did AI write this?" If yes, rewrite.
-- [ ] Does it say anything specific? Or could you swap the topic and the text would still work? Specificity is the antidote to slop.
-- [ ] Is there a single surprising sentence? Human writing surprises. Slop never does.
+| 场景 | 推荐 | 避免 |
+|------|------|------|
+| **正式叙事** | 实词为主，少修辞，省略副词 | 成语堆砌、对仗骈句 |
+| **对话** | 短促、潜台词重、有时不完整 | "X 道"标记、八股式对仗 |
+| **抒情** | 一两个新鲜的具体名词压住整段 | 形容词 + 名词陈词 |
+| **悬念 / 揭示** | 节奏放慢，用动作而非心理描写 | "心头一颤"四件套 |
+| **战斗 / 动作** | 短句、断句，留白 | 长定语、平行排比 |
 
 ---
 
-## SOURCES
+## AI 检测信号
 
-- [Measuring AI "Slop" in Text (2025)](https://arxiv.org/html/2509.19163v1) - academic paper on slop measurement
-- [slop-forensics](https://github.com/sam-paech/slop-forensics) - word/phrase overrepresentation analysis
-- [antislop-sampler](https://github.com/sam-paech/antislop-sampler) - runtime slop suppression for LLMs
-- [EQ-Bench Slop Score](https://eqbench.com/slop-score.html) - composite slop metric
-- [Pangram Labs](https://www.pangram.com/) - AI detection tool and research
-- [Pangram technical report](https://arxiv.org/html/2402.14873v3)
-- [GPTZero](https://gptzero.me/) - perplexity/burstiness-based detection
-- [AI Slop, Suspicion, and Writing Back](https://benjamincongdon.me/blog/2025/01/25/AI-Slop-Suspicion-and-Writing-Back/)
-- [Literary Hub: Spotting AI writing](https://lithub.com/heres-a-handy-guide-to-help-you-spot-ai-writing/)
-- [Red Flag Words](https://www.blakestockton.com/red-flag-words/)
-- [Detecting AI Slop: Techniques & Red Flags](https://www.glukhov.org/post/2025/12/ai-slop-detection/)
+读完一段，检查这三层：
+
+**统计层**：
+- 一段里 Tier 1 禁词≥1
+- 同一段 Tier 2 集群≥3
+- 句长变异系数 < 0.3（齐整 = 合成感）
+
+**词汇层**：
+- 成语密度 > 1.5%
+- 抽象词（"感觉 / 意识 / 本质 / 层面"）每千字 > 5
+- "X 地 + 动词"模式每章 > 8
+
+**结构层**：
+- 段落长度齐整（连续 3 段以上长度相近）
+- 三联句出现 ≥ 2 次
+- "X 道"对话标记 > 5/千字
+- "心 / 眸 / 唇 / 眉" 出现 > 6 次
+
+---
+
+## Anti-slop 自检清单
+
+写完一章后逐项核：
+
+**词层**：
+- [ ] 没有任何 Tier 1 禁词
+- [ ] Tier 2 集群每段 ≤ 2
+- [ ] Tier 3 填充语全删
+- [ ] 没有"璀璨""斑斓""波光粼粼"这种成语描写
+
+**句层**：
+- [ ] 没有连续 3 个相同结构开头
+- [ ] 段落长短不齐
+- [ ] 句长变异系数 ≥ 0.4
+- [ ] 至少有一个 4 字断句和一个 25+ 字长句
+
+**段层**：
+- [ ] "X 道"标记 ≤ 2 次
+- [ ] "心 / 眸 / 唇 / 眉"四件套合计 ≤ 3 次
+- [ ] ABB+地+动词模式 < 5 次
+- [ ] 双破折号（——）≤ 5/千字
+
+**结构层**：
+- [ ] 没有八股段落（开头-展开-例证-收束）
+- [ ] 至少一段是 1-2 句的短段
+- [ ] 没有三联排比 / 既 X 又 Y 更 Z 句式
+- [ ] 没有"不是 X，而是 Y"修辞癖
+
+**嗅探**：
+- [ ] 读出声听起来像活人在说话
+- [ ] 至少有一句让人意外
+- [ ] 换个题材这段话不能用（足够具体）
+- [ ] 一个普通读者**不会**觉得"这是 AI 写的"

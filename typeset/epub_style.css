@@ -1,9 +1,12 @@
-/* ePub stylesheet for The Second Son of the House of Bells */
+/* ePub 中文样式表 */
 
 body {
-    font-family: "Georgia", "Palatino", serif;
-    line-height: 1.5;
+    font-family: "Source Han Serif SC", "Noto Serif CJK SC", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "STSong",
+                 "Georgia", "Palatino", serif;
+    line-height: 1.7;            /* 中文行距比拉丁稍宽 */
     margin: 1em;
+    text-align: justify;
 }
 
 h1 {
@@ -30,7 +33,7 @@ hr::after {
 }
 
 p {
-    text-indent: 1.5em;
+    text-indent: 2em;            /* 中文段首缩进 2 字 */
     margin: 0;
 }
 

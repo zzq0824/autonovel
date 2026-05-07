@@ -4,15 +4,15 @@
 
 \
 
-**NOVEL TITLE**
+**未命名小说**
 
 \
 
-*Author Name*
+*作者*
 
 \
 
-*Created by Hermes Agent*
+*由 autonovel 流水线产出*
 
 \
 

@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 """
-Parse novel chapters into speaker-attributed audiobook scripts.
+把小说章节切分成"说话人 + 文本"的有声书脚本。
 
-For each chapter, uses Claude to:
-  - Identify every dialogue line and its speaker
-  - Tag narration as NARRATOR
-  - Add [audio tags] for emotional delivery based on context
+对每一章，用 LLM：
+  - 识别每一句对话及其说话人
+  - 把叙述部分标记为 NARRATOR
+  - 根据语境为每段加 [audio tag]（情绪 / 语气）
 
-Usage:
-  python gen_audiobook_script.py           # All chapters
-  python gen_audiobook_script.py 1         # Single chapter
-  python gen_audiobook_script.py 1 5       # Range of chapters
+用法：
+  python gen_audiobook_script.py           # 全部章节
+  python gen_audiobook_script.py 1         # 单章
+  python gen_audiobook_script.py 1 5       # 章节范围
+
+注意：本脚本依赖 audiobook_voices.json 中的角色列表 + 描述。请在运行前编辑该文件，
+把你的小说人物（来自 characters.md）添加进去。说话人 key 用 ASCII（如 CASS、EDDAN），
+因为它们会被用作 JSON key 与文件名片段。description 可以用中文。
 """
 import os
 import sys
@@ -28,38 +32,47 @@ CHAPTERS_DIR = BASE_DIR / "chapters"
 AUDIO_DIR = BASE_DIR / "audiobook"
 SCRIPTS_DIR = AUDIO_DIR / "scripts"
 
-# Characters from the novel
-CHARACTERS = {
-    "NARRATOR": "The narrative voice — warm, measured, precise. Reads prose with the rhythm of the novel's world.",
-    "CASS": "14-year-old boy. Dry, sharp, sometimes frustrated. His voice tightens when he lies or holds back.",
-    "EDDAN": "52, Cass's father. Deep, rough, terse. Sentences often trail off or restart. Workshop voice is steadier than kitchen voice.",
-    "PERIN": "26, Cass's brother. Dry, precise, carries something heavy. Letters-voice is more controlled than in-person voice.",
-    "LENNE": "14, female. Quick, confident, intellectually sharp. Composes while she talks — fingers moving, voice certain.",
-    "TORVALD": "63, retired dye merchant. Gravelly, warm, rambling. Outer-district speech — longer sentences, less careful, trade metaphors.",
-    "MARET": "60, female. Controlled, precise, still. No wasted words. When she finally shows emotion it's devastating.",
-    "DAV_SORN": "34, Court Singer. Formal, clipped, self-correcting. Starts sentences and abandons them. Qualifying everything.",
-    "PROCTOR_FEN": "Male, middle-aged, Academy teacher. Dry, archly amused, pedagogical.",
-    "FERREN": "40, acoustician. Clinical, measured, professional.",
-    "MIRA_FEN": "60s, female, Academy scholar. Quiet, precise, carrying thirty years of regret.",
-    "VELLA": "Lenne's mother, Court Singer. Measured, formal, the weight of knowing she's about to risk everything.",
-    "OSSIAN": "14, male student. Nervous, eager, tends to overstate.",
-}
+# 角色列表从 audiobook_voices.json 加载（不再硬编码原 Bells 角色）
+# 文件格式：{"CASS": {"description": "...", "voice_id": "..."}, ...}
+def _load_characters():
+    voices_path = BASE_DIR / "audiobook_voices.json"
+    if not voices_path.exists():
+        return {"NARRATOR": "叙述者声音 —— 温暖、平稳、精准。以本书世界的节奏读散文。"}
+    try:
+        data = json.loads(voices_path.read_text())
+        chars = {}
+        for key, info in data.items():
+            if isinstance(info, dict):
+                chars[key] = info.get("description", "")
+            else:
+                chars[key] = str(info)
+        if "NARRATOR" not in chars:
+            chars["NARRATOR"] = "叙述者声音 —— 温暖、平稳、精准。以本书世界的节奏读散文。"
+        return chars
+    except Exception as e:
+        print(f"警告：无法读取 audiobook_voices.json：{e}", file=sys.stderr)
+        return {"NARRATOR": "叙述者声音 —— 温暖、平稳、精准。"}
+
+
+CHARACTERS = _load_characters()
 
 AUDIO_TAG_GUIDE = """
-Available ElevenLabs v3 audio tags (use sparingly, only when the emotion is CLEAR):
+可用的 ElevenLabs v3 音频标记（**节省使用** —— 仅在情绪明确时打）：
 
-Emotions: [happy] [sad] [angry] [excited] [nervous] [calm] [worried] [frustrated] [hopeful] [tense]
-Delivery: [whisper] [softly] [firmly] [hesitantly] [sarcastically] [matter-of-factly] [gently]
-Reactions: [gasp] [sigh] [laughs] [clears throat]
-Volume: [quietly] [loudly]
-Pacing: [slowly] [quickly] [pause]
+情绪类（英文标记，由 ElevenLabs 模型解析）：[happy] [sad] [angry] [excited] [nervous] [calm] [worried] [frustrated] [hopeful] [tense]
+表达类：[whisper] [softly] [firmly] [hesitantly] [sarcastically] [matter-of-factly] [gently]
+反应类：[gasp] [sigh] [laughs] [clears throat]
+音量类：[quietly] [loudly]
+节奏类：[slowly] [quickly] [pause]
 
-Rules:
-- Narration: use tags VERY sparingly. Mostly just read it straight. Use [softly] for tender moments, [slowly] for revelations, [tense] for suspense.
-- Dialogue: use tags to match the speaker's emotional state in context. A worried father sounds different from an angry teenager.
-- Don't over-tag. One tag per segment is usually enough. None is fine for neutral delivery.
-- [pause] before revelations or after devastating lines.
-- [whisper] for secrets, locked-room scenes, late-night moments.
+规则：
+- 叙述：标记**极少使用**。绝大多数直接读。柔和瞬间用 [softly]，揭示用 [slowly]，悬念用 [tense]。
+- 对话：根据说话人在该语境中的情绪状态选择标记。担忧的父亲与愤怒的少年听起来应当不同。
+- 不要过度打标。**每段一个标记通常够了**。中性段落可不打。
+- 在揭示之前 / 毁灭性台词之后用 [pause]。
+- 秘密、密室戏、深夜场景用 [whisper]。
+
+注意：标记本身保持英文（ElevenLabs API token），但被标记的文本可以是中文。
 """
 
 
@@ -84,36 +97,38 @@ def parse_chapter(ch_num):
 
     text = ch_path.read_text()
     title = text.split("\n")[0].lstrip("# ").strip()
-    wc = len(text.split())
+    # 字数：中文按字符计
+    wc = len(re.findall(r"[一-鿿]", text)) or len(text.split())
 
-    prompt = f"""You are parsing a novel chapter into an audiobook script. Your job is to break the text into segments, each attributed to a speaker, with optional audio delivery tags.
+    prompt = f"""你正在把一章中文小说切分成有声书脚本。把文本切成若干段，每段标注说话人，并可选地加上音频标记。
 
-CHARACTERS IN THIS NOVEL:
-{json.dumps(CHARACTERS, indent=2)}
+CHARACTERS IN THIS NOVEL（本书人物 —— 仅用此清单中出现的 key 作为说话人）：
+{json.dumps(CHARACTERS, indent=2, ensure_ascii=False)}
 
-AUDIO TAG GUIDE:
+AUDIO TAG GUIDE（音频标记指南）：
 {AUDIO_TAG_GUIDE}
 
-RULES:
-1. Every piece of text must be attributed to a speaker. Narration = "NARRATOR".
-2. Dialogue lines must be attributed to the character who speaks them.
-3. Remove quotation marks from dialogue — the voice actor performs them.
-4. Keep narration segments reasonably sized (2-4 sentences each). Split long paragraphs.
-5. Dialogue "he said" / "she said" tags should be part of the NARRATOR segment AFTER the dialogue, not part of the character's line.
-6. Scene breaks (---) become {{"speaker": "NARRATOR", "text": "[pause]"}}
-7. Chapter titles become the first segment: {{"speaker": "NARRATOR", "text": "[slowly] Chapter One: The Morning Pitch"}}
-8. Add audio tags based on emotional context. Be subtle — most lines need no tag.
-9. Internal thoughts in *italics* should be read by the CHARACTER (Cass usually), tagged [softly] or [whisper].
+规则：
+1. 每一段文本必须有说话人。叙述 = "NARRATOR"。
+2. 每句对话必须归属到说出它的角色。
+3. **去掉**对话中的引号 —— 由配音演员演绎。
+4. 叙述段落保持合理长度（每段 2-4 句）。把长段落切开。
+5. "X 说" / "X 道" 这种对话标记应作为**对话之后**的 NARRATOR 段，不属于角色的台词。
+6. 分节符号（---）变成 {{"speaker": "NARRATOR", "text": "[pause]"}}
+7. 章节标题作为首段：{{"speaker": "NARRATOR", "text": "[slowly] 第一章：标题"}}
+8. 根据情感语境加音频标记。要克制 —— 大多数台词不需要标记。
+9. *斜体*的内心独白由对应角色读出，标记为 [softly] 或 [whisper]。
+10. 标记本身保持英文（[softly]、[pause] 等是 ElevenLabs API token），文本用中文。
 
-OUTPUT FORMAT: A JSON array of objects, each with:
-  "speaker": character name (from the list above)
-  "text": the text to speak (with optional [audio tags] at the start)
+输出格式：JSON 数组，每个对象含：
+  "speaker"：角色 key（来自上面的清单）
+  "text"：要朗读的文本（可在开头带 [audio tag]）
 
-CHAPTER {ch_num}: "{title}" ({wc} words)
+CHAPTER {ch_num}：「{title}」（约 {wc} 字）
 
 {text}
 
-Output the JSON array only. No other text."""
+只输出 JSON 数组，不要其他文字。"""
 
     print(f"  Ch {ch_num}: parsing '{title}' ({wc}w)...", end="", flush=True)
     result = call_claude(prompt)
@@ -175,7 +190,7 @@ def main():
     else:
         start, end = 1, total
 
-    print(f"Parsing chapters {start}-{end} into audiobook scripts...")
+    print(f"正在切分第 {start}-{end} 章为有声书脚本...")
 
     all_scripts = []
     for ch_num in range(start, end + 1):

@@ -1,386 +1,403 @@
-# CRAFT REFERENCE
+# CRAFT 参考手册
 
-Operationalizable frameworks for narrative craft. Everything here is
-concrete enough to evaluate against. This is the agent's education.
-
----
-
-## 1. PLOT STRUCTURE
-
-### Save the Cat Beat Sheet (percentage marks)
-
-| Beat                     | % Mark  | What happens                                    |
-|--------------------------|---------|-------------------------------------------------|
-| Opening Image            | 0-1%    | Snapshot of status quo before the story          |
-| Theme Stated             | ~5%     | Someone (NOT protagonist) hints at the lesson    |
-| Setup                    | 1-10%   | Normal world, establish characters, plant seeds  |
-| Catalyst                 | ~11%    | Something happens TO the protagonist (not choice)|
-| Debate                   | 11-23%  | Protagonist resists the call, weighs options     |
-| Break Into Two           | ~23%    | Protagonist CHOOSES to enter new world (active)  |
-| B Story                  | ~27%    | New character/relationship that carries theme    |
-| Fun and Games            | 26-50%  | The promise of the premise delivered             |
-| Midpoint                 | ~50%    | False victory OR false defeat. Stakes raised.    |
-| Bad Guys Close In        | 50-68%  | Walls closing, allies fracture, pressure mounts  |
-| All Is Lost              | ~68%    | Lowest point. Whiff of death (literal or not)    |
-| Dark Night of the Soul   | 68-77%  | Protagonist internalizes the theme               |
-| Break Into Three         | ~77%    | New info (often from B Story) changes everything |
-| Finale                   | 77-97%  | Five sub-beats (see below)                       |
-| Final Image              | ~99%    | Mirror of opening image, showing transformation  |
-
-Finale sub-beats:
-  (a) Gather the Team / Make the Plan
-  (b) Execute the Plan
-  (c) High Tower Surprise -- twist, original plan fails
-  (d) Dig Deep Down -- test of faith, find inner strength
-  (e) Execute the New Plan -- resolve + complete character arc
-
-Act structure: Act I = 0-23%, Act II = 23-77%, Act III = 77-100%
-
-CHECKABLE: Opening and final images must mirror each other. Catalyst
-must be external. Break Into Two must be a choice. Midpoint must
-reverse trajectory. All Is Lost must include some form of death.
-
-### Dan Harmon's Story Circle (8 steps, ~12.5% each)
-
-1. YOU -- Character in comfort zone
-2. NEED -- Character wants something
-3. GO -- Crosses threshold into unfamiliar territory
-4. SEARCH -- Adapts, struggles, learns
-5. FIND -- Gets what they wanted (at 6 o'clock, deepest point)
-6. TAKE -- Pays a heavy price for it
-7. RETURN -- Goes back to familiar territory
-8. CHANGE -- Is fundamentally different from step 1
-
-Key: This is FRACTAL. Applies to whole novel, each act, each chapter.
-Top half = order/comfort. Bottom half = chaos/unknown.
-
-### Promises, Progress, Payoff (Sanderson)
-
-PROMISES (first 10-20%): The opening makes implicit contracts.
-  - Tone promise: opening mood = expected mood
-  - Character promise: who this is about, what they want/lack
-  - Plot promise: what kind of conflict this will be
-  - Setting promise: genre conventions established
-
-PROGRESS (middle 60%): Meaningful advancement via try-fail cycles.
-  Scene outcomes:
-  - "Yes, but..." -- goal achieved, new complication (most common)
-  - "No, and..." -- goal failed, things get worse (most common)
-  - "No, but..." -- goal failed, silver lining (occasional)
-  - "Yes, and..." -- goal achieved, things improve (rare, save for climax)
-  Rule: 60%+ of middle scenes should be "Yes, but" or "No, and"
-
-PAYOFF (final 20%): Every promise addressed, earned and surprising
-  yet inevitable in retrospect.
-  - Promise without payoff = Chekhov's Gun violation
-  - Payoff without promise = deus ex machina
-
-### MICE Quotient (Orson Scott Card / Sanderson)
-
-Every story is a blend of four thread types:
-  - MILIEU: exploration of place/world (enter -> leave)
-  - INQUIRY: driven by question/mystery (posed -> answered)
-  - CHARACTER: driven by internal state (dissatisfaction -> change)
-  - EVENT: disruption of status quo (disruption -> new equilibrium)
-
-Rule: Threads close in REVERSE order of opening (nested like HTML tags).
-Open M-I-C, close C-I-M.
+为叙事手艺提供**可操作化**的框架。每一项都具体到能被评估。这是 agent 的教育底子。
 
 ---
 
-## 2. CHARACTER CRAFT
+## 1. 情节结构（PLOT STRUCTURE）
 
-### The Three Sliders (Sanderson)
+### 救猫咪节拍表（Save the Cat Beat Sheet）
 
-Every character has three independent dials (0-10):
+| 节拍                             | 百分比     | 内容                                                |
+|---------------------------------|------------|-----------------------------------------------------|
+| 开场画面（Opening Image）            | 0-1%      | 故事开始前现状的快照                                       |
+| 主题陈述（Theme Stated）             | ~5%       | 某人（**非主角**）暗示故事要讲的道理                              |
+| 铺垫（Setup）                       | 1-10%     | 平凡世界，立人物，埋种子                                      |
+| 触发事件（Catalyst）                  | ~11%      | 某事**发生在**主角身上（不是主角主动选）                            |
+| 犹豫（Debate）                      | 11-23%    | 主角抗拒召唤，权衡选项                                       |
+| 进入第二幕（Break Into Two）           | ~23%      | 主角**选择**进入新世界（主动）                                  |
+| B 故事线（B Story）                  | ~27%      | 携带主题的新人物 / 关系                                      |
+| 玩耍与游戏（Fun and Games）            | 26-50%    | 兑现"故事承诺"                                            |
+| 中点（Midpoint）                    | ~50%      | 假胜利**或**假失败。赌注抬高                                    |
+| 反派逼近（Bad Guys Close In）         | 50-68%    | 围墙合拢，盟友分裂，压力累积                                    |
+| 全部失去（All Is Lost）               | ~68%      | 最低点。死亡的气息（字面或象征）                                  |
+| 灵魂的暗夜（Dark Night of the Soul）   | 68-77%    | 主角内化主题                                              |
+| 进入第三幕（Break Into Three）         | ~77%      | 新信息（常来自 B 故事）改变一切                                  |
+| 终幕（Finale）                      | 77-97%    | 五个子节拍（见下）                                          |
+| 终场画面（Final Image）               | ~99%      | 与开场画面互镜，显现转变                                       |
 
-  PROACTIVITY -- Do they drive the plot or react to it?
-  LIKABILITY  -- Does the reader empathize with them?
-  COMPETENCE  -- Are they good at what they do?
+终幕子节拍：
+  (a) 召集队伍 / 制定计划
+  (b) 执行计划
+  (c) 高塔意外 —— 翻转，原计划失败
+  (d) 深掘自身 —— 信念测试，找到内在力量
+  (e) 执行新计划 —— 解决冲突 + 完成人物弧
 
-Rule: A compelling character is HIGH on at least TWO sliders, or HIGH
-on one with clear growth in others. All three low = boring. All three
-high from the start = Mary Sue.
+幕结构：第一幕 = 0-23%，第二幕 = 23-77%，第三幕 = 77-100%
 
-Classic combos:
-  - High competence + high proactivity + low likability = antihero
-  - High likability + low competence + low proactivity = everyman
-  - High proactivity + high likability + low competence = scrappy underdog
+可核查：开场画面与终场画面**必须**互镜。触发事件**必须**是外因。进入第二幕**必须**是主动选择。中点**必须**反转轨迹。"全部失去"**必须**含某种死亡（字面或象征）。
 
-### Wound / Want / Need / Lie Framework
+### 哈蒙故事圆环（Dan Harmon's Story Circle）
 
-A causal chain. Each element causes the next:
+8 步，每步约 12.5%。
 
-  GHOST (backstory event that damaged the character)
-    -> WOUND (ongoing emotional damage)
-      -> LIE (false belief adopted to cope)
-        -> WANT (external goal driven by the Lie -- wrong solution)
-        -> NEED (internal truth that will actually heal -- opposes the Lie)
+1. **YOU**（你）—— 角色处在舒适区
+2. **NEED**（需要）—— 角色想要某物
+3. **GO**（出发）—— 跨过门槛进入陌生领地
+4. **SEARCH**（探索）—— 适应、挣扎、学习
+5. **FIND**（找到）—— 拿到想要之物（六点钟方向，最深处）
+6. **TAKE**（代价）—— 为此付出沉重代价
+7. **RETURN**（归来）—— 回到熟悉领地
+8. **CHANGE**（改变）—— 与第 1 步根本不同了
 
-Rules:
-  - Ghost/Wound hinted at in Act 1 (first 25%)
-  - Want clearly stated by end of Act 1
-  - Want and Need must be IN TENSION
-  - Midpoint (~50%): first glimpse that the Want isn't working
-  - All Is Lost (~75%): Lie's worst consequences revealed
-  - Climax: character CHOOSES between Want and Need
-    - Positive arc: chooses Need, rejects Lie
-    - Negative arc: chooses Want, doubles down on Lie
-    - Flat arc: already knows truth, changes the WORLD instead
+关键：这是**分形**。可应用于整本小说，也可用于每一幕、每一章。
+上半圆 = 秩序 / 舒适。下半圆 = 混乱 / 未知。
 
-Checkable: Can you state the Lie in one sentence? Is the Truth its
-direct opposite? Does the Ghost causally explain the Lie?
+### 桑德森的"承诺-进展-兑现"（Promises, Progress, Payoff）
 
-### The Lie the Character Believes (K.M. Weiland)
+**承诺（PROMISES）**（前 10-20%）：开篇做出的隐性契约。
+  - 调性承诺：开篇情绪 = 期待情绪
+  - 人物承诺：本书是关于**谁**的故事，他们**要什么 / 缺什么**
+  - 剧情承诺：这将是**哪种**冲突
+  - 设定承诺：类型公约确立
 
-Beat-by-beat character arc mapped onto plot structure:
+**进展（PROGRESS）**（中段 60%）：通过试-错循环（try-fail cycles）有意义地推进。
+  场景结果四类：
+  - "是，但是..."（Yes, but）—— 目标达成，新的并发症（最常用）
+  - "不，而且..."（No, and）—— 目标失败，事态恶化（最常用）
+  - "不，但是..."（No, but）—— 目标失败，有微弱亮光（偶用）
+  - "是，并且..."（Yes, and）—— 目标达成，事态变好（罕用，留给高潮）
+  规则：中段 60%+ 的场景应当是 "是但是" 或 "不而且"。
 
-| Plot Beat          | % Mark | Arc Function                              |
-|--------------------|--------|-------------------------------------------|
-| Setup              | 0-12%  | Character lives in Lie. It "works."       |
-| Inciting Event     | ~12%   | First brush with Truth                    |
-| First Plot Point   | ~25%   | Lie challenged directly, still held       |
-| First Half Act 2   | 25-50% | Lie-based strategies, gathering tools     |
-| Midpoint           | ~50%   | Glimpses Truth. Shifts reactive -> active |
-| Second Half Act 2  | 50-75% | Oscillates between Lie and Truth          |
-| Third Plot Point   | ~75%   | Lie's worst consequences. Must choose.    |
-| Climax             | ~88-95%| Final choice: reject Lie, embrace Truth   |
-| Resolution         | 95-100%| Lives in new Truth. Need fulfilled.       |
+**兑现（PAYOFF）**（最后 20%）：每一个承诺都被兑现，结果应当**水到渠成又出人意料**。
+  - 有承诺没兑现 = 契诃夫之枪违规
+  - 有兑现没承诺 = 神兵天降（deus ex machina）
 
-Three arc types:
-  - POSITIVE: Lie -> Truth (growth)
-  - FLAT: Truth -> Truth (changes the world)
-  - NEGATIVE: Truth -> Lie, or Lie -> Deeper Lie (fall)
+### MICE 框架（Orson Scott Card / Sanderson）
 
-### Dialogue Distinctiveness
+每个故事是四种线索的混合：
 
-Eight measurable dimensions per character:
+  - **MILIEU（境）**：对地方 / 世界的探索（进入 → 离开）
+  - **INQUIRY（询）**：由问题 / 谜团驱动（提出 → 解答）
+  - **CHARACTER（人）**：由内心状态驱动（不满 → 改变）
+  - **EVENT（事）**：现状被打破（中断 → 新均衡）
 
-1. Vocabulary level (syllable count, reading level)
-2. Sentence length and structure (terse vs verbose)
-3. Contractions and formality ("cannot" vs "can't")
-4. Verbal tics and catchphrases (unique per character)
-5. Question vs statement ratio (curious vs authoritative)
-6. Interruption patterns (dominant vs submissive)
-7. Metaphor domain (soldier = military metaphors, farmer = land)
-8. Directness vs indirectness ("Leave." vs "Isn't it getting late?")
+规则：线索**按打开的相反顺序闭合**（嵌套，像 HTML 标签）。打开 M-I-C，闭合 C-I-M。
 
-Test: Remove all dialogue tags. Can you still tell who is speaking?
-If yes, dialogue is distinct. If no, characters need differentiation.
+### 中国传统结构补充（作为词汇与韵律参考）
 
----
+上述西方框架仍是本流水线的评分骨架。但中文文学传统提供了若干在节奏与韵律上有用的**补充词汇**。Agent 应当熟悉它们，以便选择恰当的声音。
 
-## 3. WORLDBUILDING
+**起承转合**（古典四段式）：
+  - **起**：题目浮现，氛围立起
+  - **承**：承接题旨，展开充实
+  - **转**：突然翻面，角度变化
+  - **合**：呼应开篇，收束全篇
 
-### Sanderson's Three Laws of Magic
+  对应 Save the Cat 的粗略映射：起 ≈ 1-25%，承 ≈ 25-50%，转 ≈ 50-75%（中点至 All Is Lost），合 ≈ 75-100%。但**起承转合更注重情绪节拍而非剧情**，常被用于检查"开篇所立的调性是否在结尾被关掉"。
 
-ZEROTH LAW: "Always err on the side of awesome."
-  Wonder has intrinsic value, even if it bends other rules.
+**章回小说节拍**（如《水浒》《红楼》）：
+  - 每回有标题对仗（"林冲风雪山神庙，陆虞侯火烧草料场"）
+  - 每回末"且听下回分解"—— 必须留扣
+  - 单回内常含完整起承转合
 
-FIRST LAW: "An author's ability to solve conflict with magic is
-  DIRECTLY PROPORTIONAL to how well the reader understands it."
-  - Hard magic (rules clear) CAN solve conflicts
-  - Soft magic (mysterious) should CREATE problems, not solve them
-  - Climactic conflict solved by unexplained magic = deus ex machina
-  - Eval: for each magic-solved conflict, was that capability
-    established BEFORE the resolution?
+  对当代写作的启示：每章自身应当成形，不只是大书的切片。每章末必须留一根钩子。
 
-SECOND LAW: "Limitations > Powers"
-  Three categories:
-  - LIMITATIONS: hard boundaries (what it can't do)
-  - COSTS: what the user pays (exhaustion, life force, resources)
-  - WEAKNESSES: vulnerabilities it creates (visible to enemies, etc.)
-  Rule: limitations should be >= powers in narrative prominence.
-  Rule: costs should DRIVE PLOT DECISIONS.
+**武侠三段式**（金庸常用）：
+  - **奇遇**：偶然或被迫的转折
+  - **修炼**：忍受 / 学习 / 累积
+  - **报偿**：能力的检验，常以巨大代价
 
-THIRD LAW: "Expand what you have before adding something new."
-  - Fewer powers with more applications = depth
-  - Many powers with few applications each = grab-bag
-  - No new powers in the final 25% that weren't foreshadowed
-
-### Worldbuilding Principles
-
-Three pillars (can't do all three deeply -- pick 1-2):
-  - PHYSICAL: geography, climate, architecture, sensory experience
-  - CULTURAL: religion, politics, customs, economics, language
-  - MAGICAL: the speculative element(s)
-
-Iceberg principle: Author knows 10x more than appears on page.
-  Small unexplained details > over-explained systems.
-  World should feel like it exists beyond the story's edges.
-
-Interconnection: If magic exists, trace implications through society,
-  economy, warfare, religion. Magic with zero cultural impact = shallow.
-
-Pyramid of Abstraction: Ground descriptions in CONCRETE details that
-  IMPLY abstract qualities. Not "the city was old" but "moss crusted
-  the cracked stone steps leading to a gate whose iron had long since
-  rusted to lace."
-
-Info-dump avoidance: Worldbuilding through experience, action, and
-  dialogue -- not exposition paragraphs. Zero pure-exposition paragraphs
-  over 100 words in chapter 1.
+  这是 Story Circle 的中式变体，强调"修炼"段（占比可达 50%）—— 与 AI 容易压缩"过程"的倾向相反。
 
 ---
 
-## 4. FORESHADOWING & CHEKHOV'S GUN
+## 2. 人物塑造（CHARACTER CRAFT）
 
-Two bidirectional rules:
+### 桑德森三杆（The Three Sliders）
 
-RULE 1 (setup -> payoff): Every prominently introduced element must
-  serve a narrative purpose later. If it gets its own descriptive
-  sentence, is mentioned multiple times, or is remarked upon in
-  dialogue -- it must become relevant.
+每个人物有三个独立的旋钮（0-10）：
 
-RULE 2 (payoff -> setup): Every significant element used in the
-  climax must have been introduced earlier. Zero unforeshadowed
-  elements in the climax.
+  **PROACTIVITY（主动性）** —— 他们驱动剧情还是被剧情推动？
+  **LIKABILITY（共情度）** —— 读者是否同情他们？
+  **COMPETENCE（能力）** —— 他们做事在行吗？
 
-Foreshadowing types:
-  1. Direct: prophecy, warning, statement about the future
-  2. Symbolic: objects/images representing future events
-  3. Dialogue: double meanings realized later
-  4. Action: small events previewing larger ones
-  5. Title/naming: chapter titles or names with hidden significance
+规则：有吸引力的人物在至少**两根**杆上偏高，或在一根上偏高且其他在成长。三根全低 = 无聊。三根从一开始就全高 = 玛丽苏。
 
-Rules:
-  - Minimum one scene of separation between plant and payoff
-  - Rule of three: important threads referenced ~3 times before payoff
-  - Every planted thread must resolve (or be a deliberate red herring
-    that is itself explained)
+经典组合：
+  - 高能力 + 高主动 + 低共情 = 反英雄
+  - 高共情 + 低能力 + 低主动 = 普通人
+  - 高主动 + 高共情 + 低能力 = 屡败屡战的小角色
 
----
+### 创伤 / 欲望 / 需要 / 谎言（Wound / Want / Need / Lie）
 
-## 5. SHOW DON'T TELL (operational definition)
+一条因果链。每环导致下一环：
 
-TELLING = using an abstract label where concrete evidence would work.
-SHOWING = conveying through action, sensory detail, dialogue, specifics.
+  **GHOST（幽灵）**（背景中曾损害角色的事件）
+    → **WOUND（创伤）**（持续的情感损伤）
+      → **LIE（谎言）**（为应付创伤所采纳的虚假信念）
+        → **WANT（欲望）**（由谎言驱动的外部目标 —— 是错误的解）
+        → **NEED（需要）**（真正能治愈的内在真相 —— 与谎言对立）
 
-Detectable telling patterns (regex-able):
-  - "[Character] felt [emotion]" / "was [emotion]" / "seemed [emotion]"
-  - Direct emotion words as exposition: angry, sad, happy, scared,
-    nervous, excited, jealous, guilty, anxious, lonely, desperate
-  - Emotion adverbs: angrily, sadly, happily, nervously
-  - Trait declarations: "[Character] was [trait]" -- brave, kind, smart
-  - Relationship declarations: "They were best friends."
-  - Atmosphere labels: "It was a creepy house."
+规则：
+  - 幽灵 / 创伤在第一幕（前 25%）暗示
+  - 欲望在第一幕末明确陈述
+  - 欲望与需要必须**处于张力**
+  - 中点（~50%）：第一次瞥见欲望并不奏效
+  - 全部失去（~75%）：谎言最坏的后果暴露
+  - 高潮：角色在欲望与需要之间**做出选择**
+    - 正向弧：选需要，弃谎言
+    - 反向弧：选欲望，加倍下注谎言
+    - 平直弧：已知真相，**改变世界**而非自己
 
-When telling is OK:
-  - Time transitions: "Three weeks later"
-  - Mundane context: "She worked as a nurse" (if not plot-critical)
-  - Pacing compression of uneventful periods
-  - First-person narrators naturally tell about their own feelings
+可核查：能否一句话说出谎言？真相是不是它的直接对立？幽灵能否因果地解释谎言？
 
-Rule: Critical moments (emotional peaks, revelations, climax) should
-be ZERO tell, all show.
+### Weiland 的"角色相信的谎言"（节拍对应）
 
----
+| 剧情节拍              | 百分比     | 弧线功能                                   |
+|----------------------|------------|------------------------------------------|
+| 铺垫（Setup）            | 0-12%     | 角色生活在谎言中。它**奏效**。                          |
+| 触发事件（Inciting Event） | ~12%      | 第一次擦到真相                                  |
+| 第一情节点（First Plot Point）| ~25%   | 谎言被直接挑战，仍坚持                              |
+| 第二幕前半            | 25-50%     | 用基于谎言的策略，集结工具                            |
+| 中点（Midpoint）         | ~50%      | 瞥见真相。从被动转主动                              |
+| 第二幕后半            | 50-75%     | 在谎言与真相之间摇摆                               |
+| 第三情节点            | ~75%       | 谎言最坏的后果。必须做选择                            |
+| 高潮（Climax）           | ~88-95%   | 最终选择：弃谎言，拥抱真相                             |
+| 解决（Resolution）        | 95-100%   | 在新真相中生活。需要被满足                             |
 
-## 6. PROSE CRAFT (what makes writing alive)
+三种弧型：
+  - **正向**：谎言 → 真相（成长）
+  - **平直**：真相 → 真相（改变世界）
+  - **反向**：真相 → 谎言，或 谎言 → 更深的谎言（堕落）
 
-### Le Guin's Core Insight
-In fantasy, STYLE IS NOT ORNAMENT -- it IS the fantasy. The language
-doesn't describe the world; the language CREATES it. If your fantasy
-world sounds like a Poughkeepsie bus schedule, you're not writing
-fantasy. The prose must have a register appropriate to the world.
+### 对话辨识度（八个可量度维度）
 
-### What the best fantasy prose does
-1. SPECIFICITY: Not "a bird" but "a jay." Not "flowers" but "lupine."
-2. SURPRISE: Word choices the reader doesn't predict.
-3. RHYTHM VARIATION: Short. Then long sentences that carry the reader
-   forward. Then short again.
-4. SUBTEXT: What's NOT said matters as much as what is.
-5. EARNED METAPHOR: Metaphors from the CHARACTER'S experience, not a
-   thesaurus. A blacksmith thinks in terms of heat and metal.
-6. SENSORY GROUNDING: Anchored in specific senses, not abstraction.
-7. RESTRAINT: Power from what is left OUT, not piled on.
-8. QUIET MOMENTS: Not every scene is action. Characters sitting,
-   thinking, watching rain -- these ground the dramatic moments.
+每个人物可在以下八维上区分：
 
-### Le Guin Exercise
-Write description WITHOUT adjectives or adverbs. Forces strong nouns
-and verbs. This is exactly what AI fails at: AI leans on adjective-noun
-clichés ("ancient wisdom," "piercing gaze," "heavy silence") instead
-of specific verbs and nouns.
+1. 词汇等级（用字深浅、文白比例）
+2. 句长与结构（简短 vs 缠绕）
+3. 文白程度与正式度（"不"还是"未"，"父亲"还是"爹"）
+4. 口头禅 / 语癖（每个角色独有）
+5. 问句 vs 陈述句比例（好奇 vs 权威）
+6. 打断模式（强势 vs 退让）
+7. 比喻领域（士兵用兵器 / 农人用田地 / 学者用典籍 / 工匠用器物）
+8. 直白 vs 迂回（"走"vs"是不是天色不早了"）
 
-### Fiction-Specific AI Tells (beyond the general anti-slop list)
-Kill these on sight in prose:
-  - "A sense of [emotion]"
-  - "Couldn't help but feel"
-  - "The weight of [abstract noun]"
-  - "The air was thick with [emotion/tension]"
-  - "Eyes widened" (as default surprise reaction)
-  - "A wave of [emotion] washed over"
-  - "A pang of [emotion]"
-  - "Heart pounded in [his/her] chest" (where else?)
-  - "[Raven/dark/golden] hair [spilled/cascaded/tumbled]"
-  - "Piercing [blue/green] eyes"
-  - "A knowing smile"
+测试：把所有对话标记去掉。还能分辨说话人吗？能 = 对话有辨识度。不能 = 人物需要分化。
 
 ---
 
-## 7. THE STABILITY TRAP (AI's worst tendency)
+## 3. 世界观构建（WORLDBUILDING）
 
-Academic finding (Rettberg & Wigers 2025): AI stories FAVOUR STABILITY
-OVER CHANGE. This is fatal for fiction.
+### 桑德森魔法三定律
 
-Specific failure modes:
-  - Characters resist transformation
-  - Conflicts resolve too quickly and cleanly
-  - AI avoids genuine darkness, moral ambiguity, irreversible loss
-  - The "sharp point you started with gets rounded off into something
-    vaguer, safer, more generic"
-  - No information economy: AI reveals everything immediately, can't
-    maintain mystery or delayed payoffs
-  - Emotional room temperature: everything stays at the same level
+**第零定律**："Always err on the side of awesome（永远偏向震撼）"
+  奇观本身有内在价值，即使它弯曲了其他规则。
 
-COUNTERMEASURES (actively enforce these):
-  - Characters must end TRULY different from how they began
-  - Let bad things stay bad. Not everything gets fixed.
-  - Allow irreversible decisions and irreversible loss
-  - Withhold information. The reader should not know everything.
-  - Create genuine moral ambiguity. Let the "right" choice be unclear.
-  - Vary emotional intensity: quiet scenes, explosive scenes, dread,
-    relief, boredom, wonder, horror. Not a flat line.
-  - If a choice has no real cost, it's not a real choice.
+**第一定律**："作者用魔法解决冲突的能力，与读者对该魔法的理解程度**直接成正比**"
+  - 硬魔法（规则清晰）**可以**用于解决冲突
+  - 软魔法（神秘）应当**制造**问题，不该解决问题
+  - 高潮冲突若被未解释的魔法解决 = 神兵天降（deus ex machina）
+  - 评估：每一次"魔法解决冲突"，该能力是否**在解决之前**就被确立？
+
+**第二定律**："限制 > 能力（Limitations > Powers）"
+  三类约束：
+  - **限制（LIMITATIONS）**：硬边界（不能做什么）
+  - **代价（COSTS）**：使用者付出的（疲劳、寿元、资源）
+  - **弱点（WEAKNESSES）**：它创造的脆弱（被敌人看见、被克制）
+  规则：限制在叙事中的篇幅应 ≥ 能力。
+  规则：代价应当**驱动剧情决策**。
+
+**第三定律**："先扩展已有的，再添加新的"
+  - 少能力 + 多应用 = 深度
+  - 多能力 + 各自单一应用 = 杂货铺
+  - 末 25% 不引入未铺垫的新能力
+
+### 世界观三支柱
+
+无法三支同时深耕 —— 选 1-2：
+  - **PHYSICAL（物理）**：地理、气候、建筑、感官体验
+  - **CULTURAL（文化）**：宗教、政治、习俗、经济、语言
+  - **MAGICAL（魔法）**：思辨元素
+
+### 冰山原则 + 中文笔记体的隐忍传统
+
+**冰山原则**（海明威，原话海上之冰只浮 1/8）：作者所知应当是页面所写的 10 倍。
+  少量未解释的细节 > 过度解释的系统。
+  世界观应当让人感觉**它在故事的边缘之外仍然存在**。
+
+中文笔记体（《世说新语》《阅微草堂笔记》）天然就是冰山写法 —— 一段几句，留白八分。当代中文奇幻可以借鉴这种"省略多于陈述"的隐忍。
+
+### 互联性（Interconnection）
+
+如果魔法存在，沿着它的影响追踪到社会、经济、战争、宗教。"对文化无影响的魔法" = 浅薄。
+
+### 抽象金字塔（Pyramid of Abstraction）
+
+把描写**接地**于**具体细节**，让具体细节**暗示**抽象品质。
+
+不是"这座城市很古老"，而是"苔藓糊在裂开的石阶缝里，通往一座城门 —— 它的铁条早已锈成蕾丝"。
+
+### 信息倾倒（Info-dump）规避
+
+通过经验、行动、对话来世界观，而非陈述段落。第一章里超过 100 字的纯陈述段落应为 0。
 
 ---
 
-## 8. EVALUATION RUBRICS (summary)
+## 4. 伏笔与契诃夫之枪
 
-### Magic System
-  - First Law compliance: foreshadowed solutions / total magic solutions
-  - Limitation depth: count of limitations + costs + weaknesses
-  - Power/limitation ratio: limitations >= powers
-  - Depth score: applications shown / distinct abilities introduced
-  - No new unforeshadowed powers in final 25%
+两条**双向**规则：
 
-### Plot Structure
-  - Beat compliance: major beats present at roughly correct % marks
-  - Payoff compliance: promises paid off / promises made
-  - Try-fail ratio: % middle scenes as "yes-but" or "no-and"
-  - Escalation: stakes increase through the middle
-  - Scene-to-plot connection: % scenes serving main plot
-  - MICE closure: all threads closed in reverse order
+**RULE 1（铺垫 → 兑现）**：每一个被显著引入的元素都必须在后文有叙事作用。如果它单独占了一句描写、被多次提到、或被人物在对话中评论 —— 它必须**变得相关**。
 
-### Character
-  - Slider profile: at least 2/3 high OR clear growth trajectory
-  - Motivation clarity: want/need statable in one sentence
-  - Internal conflict: identifiable flaw/wound creating tension
-  - Arc consistency: transformative characters change, iconic stay stable
-  - Lie/Truth: identifiable and in direct opposition
+**RULE 2（兑现 → 铺垫）**：高潮中使用的每一个重要元素都必须**在前文出现过**。高潮中**零个**未铺垫元素。
 
-### Worldbuilding
-  - At least 1 pillar with significant depth
-  - Iceberg hints: unexplained-but-intriguing details present
-  - Extrapolation: 2-3 societal implications per speculative element
-  - No info-dumps over 100 words without character action/dialogue
-  - Concrete/sensory details outnumber abstract adjectives
+伏笔类型：
+  1. **直接**：预言、警告、关于未来的明确陈述
+  2. **象征**：代表未来事件的物 / 意象
+  3. **对话**：日后回望才显出的双重含义
+  4. **行动**：预演大事件的小事件
+  5. **题/名**：章节标题或姓名暗藏意义
 
-### Prose
-  - Show-to-tell ratio (heavy showing, especially at emotional peaks)
-  - Sentence length coefficient of variation (higher = more human)
-  - Slop penalty (from mechanical anti-slop checker)
-  - Fiction-specific AI tells (banned phrases)
-  - Specificity: concrete nouns > generic nouns
-  - No stability trap: genuine change, cost, darkness present
+规则：
+  - 铺垫到兑现至少隔一场戏
+  - **三次法则**：重要线索在兑现前被引用约 3 次
+  - 每根植入的线索都必须收束（除非是被明确解释过的红鲱鱼）
+
+---
+
+## 5. 展示而非陈述（Show Don't Tell）
+
+操作定义：
+
+  **TELLING（陈述）** = 用抽象标签代替具体证据
+  **SHOWING（展示）** = 通过动作、感官细节、对话、具体物来传递
+
+可正则识别的"陈述"模式（中文版）：
+  - "他 / 她 / 我 + 感到 / 觉得 / 心想 + 情绪词"
+    （愤怒、悲伤、害怕、紧张、嫉妒、绝望……）
+  - **直接的情绪标签作为陈述**：愤怒、悲伤、开心、害怕、紧张、兴奋、嫉妒、愧疚、焦虑、孤独、绝望
+  - **ABB 副词 + 动词**：紧紧地握住、深深地凝视、缓缓地走来
+  - **特征断言**："他是个勇敢的人" "她很善良"
+  - **关系断言**："他们是最好的朋友"
+  - **氛围标签**："那是一座阴森的房子"
+
+何时陈述 OK：
+  - 时间过渡："三周后"
+  - 平庸背景："她是一名护士"（如果不影响剧情）
+  - 对无事发生时段的压缩
+  - 第一人称叙述者讲自己的感受是自然的
+
+规则：**关键时刻**（情感峰值、揭露、高潮）应**零陈述**，全部展示。
+
+---
+
+## 6. 散文工艺（让写作活起来）
+
+### 厄休拉·勒古恩（Le Guin）的核心见解
+
+在奇幻里，**风格不是装饰，风格本身就是幻想**。语言不是描述世界 —— 语言**创造**世界。如果你的奇幻世界听起来像今天某条公交时刻表，你写的就不是奇幻。散文必须有匹配那个世界的**语调**（register）。
+
+### 八个原则
+
+1. **具体性（SPECIFICITY）**：不是"一只鸟"而是"一只山雀"。不是"花"而是"野棉花"。
+2. **出乎意料（SURPRISE）**：读者预测不到的用词。
+3. **节奏变化（RHYTHM VARIATION）**：短。然后是带着读者向前走的长句子，像一条河托着一片叶子。然后再短。
+4. **潜台词（SUBTEXT）**：**没说**的与说出口的同等重要。
+5. **应得的比喻（EARNED METAPHOR）**：比喻来自**人物的经验**，不是辞典。铁匠想到事物会想到火与铁。
+6. **感官扎根（SENSORY GROUNDING）**：锚定在具体感官，而非抽象。
+7. **克制（RESTRAINT）**：力量来自**省略**，不是堆砌。
+8. **安静瞬间（QUIET MOMENTS）**：不是每场戏都是动作。坐着、思考、看雨 —— 这些瞬间为戏剧时刻打底。
+
+### 钱钟书 / 张爱玲的具体性传统（中文补充）
+
+中文白话文最好的具体性传统来自钱钟书与张爱玲 —— 她 / 他们用**罕见的具体名词压住空话**。
+
+> 张爱玲：「她头上插着一朵晚香玉。」
+> （而不是"她头发上有一朵芬芳的花"）
+
+> 钱钟书：「他笑得眼睛眯成一条缝，露出两颗很白的虎牙。」
+> （而不是"他露出灿烂的笑容"）
+
+这与勒古恩"strong nouns and verbs"是同一种工艺，在中文里更应警惕**成语对具体性的稀释**。
+
+### 中文 AI 露馅词（与 voice.md Tier 1 同步）
+
+这些词在中文 AI 输出里被**严重过度使用**。见即必删：
+
+- 璀璨、斑斓、波光粼粼、金光闪闪、炯炯有神、深邃
+- 绝美、惊鸿、举世无双、举足轻重、不容忽视
+- 淋漓尽致、栩栩如生、跃然纸上、鳞次栉比
+- 川流不息、络绎不绝、一应俱全、五光十色
+- 美轮美奂、登峰造极、巧夺天工、叹为观止、气势磅礴
+
+详见 voice.md Part 1 Tier 1 / Tier 2 / Tier 3。
+
+### 勒古恩练习
+
+**写一段不带形容词与副词的描写**。这逼迫你用强名词与强动词。这正是 AI 的死穴 —— AI 倾向于"形容词 + 名词"陈词组合（"古老的智慧"、"凌厉的目光"、"沉重的沉默"），而不是具体的动词与名词。
+
+---
+
+## 7. 稳定陷阱（THE STABILITY TRAP）—— AI 最危险的倾向
+
+学术发现（Rettberg & Wigers 2025）：AI 故事**偏好稳定甚于变化**。这对小说是致命的。
+
+具体失败模式：
+  - 角色抗拒变化
+  - 冲突解决得太快、太干净
+  - AI 回避真正的黑暗、道德灰色、不可逆的失去
+  - "你开篇立的那个尖锐的点，被磨成更模糊、更安全、更普通的东西"
+  - 信息经济学缺失：AI 立刻揭露一切，无法维持悬念或延迟兑现
+  - 情感室温：所有场景都停留在同一情绪温度
+
+对策（必须主动执行）：
+  - 角色结尾必须**真正不同**于开篇
+  - 让坏事**保持**坏。不是所有伤都被治愈
+  - 允许不可逆的决定与不可逆的失去
+  - 隐瞒信息。读者**不应**知道一切
+  - 制造真正的道德两难。让"对的选择"不清楚
+  - 变化情绪强度：安静场景、爆发场景、恐惧、解脱、无聊、惊奇、恐怖。不要平直如线
+  - 如果某个选择**没有真实代价**，那就**不是**真正的选择
+
+---
+
+## 8. 评分准则汇总（与 evaluate.py 维度对齐）
+
+### 魔法系统
+  - 第一定律合规：被铺垫的解决方案数 / 总魔法解决方案数
+  - 限制深度：限制 + 代价 + 弱点的总数
+  - 能力 / 限制比：限制数 ≥ 能力数
+  - 深度分：被展示的应用数 / 被引入的能力数
+  - 末 25% 无未铺垫的新能力
+
+### 情节结构
+  - 节拍合规：主要节拍出现在大致正确的百分比位置
+  - 兑现合规：被兑现的承诺数 / 做出的承诺数
+  - 试-错比例：中段中"是但是"或"不而且"场景的比例
+  - 升级：赌注在中段不断上抬
+  - 场景对剧情的贡献：服务主线的场景比例
+  - MICE 闭合：所有线索按相反顺序关闭
+
+### 人物
+  - 三杆轮廓：至少两根偏高，或有清晰成长曲线
+  - 动机清晰：欲望 / 需要可一句说清
+  - 内在冲突：可识别的瑕疵 / 创伤创造张力
+  - 弧线一致：变形角色变，象征角色不变
+  - 谎言 / 真相：可识别且**直接**对立
+
+### 世界观
+  - 至少 1 根支柱有显著深度
+  - 冰山线索：未解释但引人入胜的细节存在
+  - 外推：每个思辨元素有 2-3 项社会影响被探讨
+  - 第一章中无超过 100 字的纯信息倾倒（不带人物动作或对话）
+  - 具体感官细节多于抽象形容词
+
+### 散文
+  - 展示 / 陈述比（情感峰值处尤其偏向展示）
+  - 句长变异系数（越高越像活人）
+  - Slop 扣分（来自机械 anti-slop 扫描）
+  - 中文小说 AI tells（禁词、成语堆、心眸唇眉、ABB 副词病、"X道"滥用、翻译腔）
+  - 具体性：具体名词 > 泛化名词
+  - 无稳定陷阱：真实变化、代价、黑暗都在场

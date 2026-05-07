@@ -112,6 +112,9 @@ def download_image(url, dest_path):
 
 def call_claude(prompt, max_tokens=1500):
     import llm_client
+    # 注：本模块只用于生成图像 prompt（英文为佳，因 fal.ai diffusion 模型训练数据
+    # 以英文为主，英文描述对图像生成质量显著更好）。此处 LLM 的 system 指令
+    # 保持英文，让模型直接产出英文 art prompt 给 fal.ai，避免转译损失。
     return llm_client.call(
         prompt,
         model=WRITER_MODEL,

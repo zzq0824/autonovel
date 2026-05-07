@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Auto-generate revision briefs from reader panel feedback, evaluation results,
-or adversarial cuts.
+从读者评审团反馈、评估结果、对抗式切口数据自动生成修订 brief。
 
-Usage:
-  python gen_brief.py --panel 12    # brief from panel feedback for ch 12
-  python gen_brief.py --eval 12     # brief from eval callouts for ch 12
-  python gen_brief.py --cuts 12     # brief from adversarial cuts for ch 12
-  python gen_brief.py --auto        # auto-detect weakest chapter and generate
+用法：
+  python gen_brief.py --panel 12    # 从 panel 反馈生成第 12 章 brief
+  python gen_brief.py --eval 12     # 从 eval 结果生成第 12 章 brief
+  python gen_brief.py --cuts 12     # 从对抗式切口生成第 12 章 brief
+  python gen_brief.py --auto        # 自动选最弱章节并合成 brief
 """
 import argparse
 import json
@@ -62,25 +61,29 @@ def word_count(text: str) -> int:
 
 
 def extract_voice_rules() -> list[str]:
-    """Pull the key guardrail / voice rules from voice.md Part 1 + Part 2."""
+    """从 voice.md Part 1 + Part 2 拉出关键底线 / 文风规则（中文版）。"""
     if not VOICE_PATH.exists():
-        return ["(voice.md not found)"]
-    voice = VOICE_PATH.read_text(encoding="utf-8")
+        return ["（未找到 voice.md）"]
 
     rules: list[str] = []
 
-    # Part 2 identity rules we always want
-    rules.append("Body-first emotion (jaw, ribs, tongue before naming the feeling)")
-    rules.append("No telling after showing")
-    rules.append("No triadic sensory lists")
-    rules.append("70%+ in-scene (dialogue and action, not summary)")
-    rules.append("Dialogue: clipped, subtext-heavy, 'said' default, no adverb tags")
-    rules.append("Sentence rhythm: mixed meter, fragments for pain, long for perception")
-    rules.append("Vocabulary from craft/trade/body wells — no generic fantasy diction")
+    # 始终要求的核心规则
+    rules.append("情绪以身体为先（颌骨 / 肋骨 / 舌头先于命名感觉）")
+    rules.append("展示之后不再陈述")
+    rules.append("不要三联感官列表（X、Y、Z 三件并列）")
+    rules.append("70%+ 在场景里（对话与动作，少用概述）")
+    rules.append("对话：短促、潜台词重、默认裸引号，避免副词标记")
+    rules.append("句子节奏：长短混合，痛楚时用断句，感知时用长句")
+    rules.append("词汇取自手艺 / 行当 / 身体之井，不用泛化奇幻 / 网文用语")
 
-    # Part 1 structural slop
-    rules.append("No paragraph-template-machine (vary structure)")
-    rules.append("Max 1-2 em dashes per page")
+    # Part 1 结构性 slop
+    rules.append("不要「段落模板机」（变化结构）")
+    rules.append("每页破折号 ≤ 1-2 处")
+    rules.append("成语堆禁词：璀璨 / 斑斓 / 鳞次栉比 / 美轮美奂 / 气势磅礴 / 叹为观止")
+    rules.append("禁 ABB 副词病：深深地 / 紧紧地 / 缓缓地 + 动词")
+    rules.append("禁「心 / 眸 / 唇 / 眉」四件套滥用（每章合计 ≤ 3 次）")
+    rules.append("「X 道」对话标记每章 ≤ 2 处，默认裸引号 + 动作")
+    rules.append("禁翻译腔：「在...之下」「对...而言」「就...来说」")
 
     return rules
 
@@ -140,7 +143,7 @@ def panel_mentions_for_chapter(panel: dict, ch: int) -> dict:
 
     # Use word-boundary regex so "Chapter 2" doesn't match "Chapter 21"
     ch_re = re.compile(
-        rf"\b(?:Chapter|Ch\.?)\s*{ch}\b", re.I
+        rf"(?:Chapter|Ch\.?|第)\s*{ch}\s*(?:章)?\b", re.I
     )
 
     for reader_name, reader_data in readers.items():
@@ -327,16 +330,16 @@ def build_panel_brief(ch: int) -> str:
         target_note = f"~{wc} words (current length, unless changes dictate otherwise)"
 
     # Assemble
-    brief = f"# Revision Brief: Chapter {ch} — {title} ({brief_type})\n\n"
-    brief += "## PROBLEM\n"
+    brief = f"# 修订 Brief：第 {ch} 章 —— {title}（{brief_type}）\n\n"
+    brief += "## 问题（PROBLEM）\n"
     brief += "\n\n".join(problem_parts) + "\n\n"
-    brief += "## WHAT TO KEEP\n"
+    brief += "## 保留（WHAT TO KEEP）\n"
     brief += "\n".join(keep_parts) + "\n\n"
-    brief += "## WHAT TO CHANGE\n"
+    brief += "## 改动（WHAT TO CHANGE）\n"
     brief += "\n".join(change_parts) + "\n\n"
-    brief += "## VOICE RULES\n"
+    brief += "## 文风规则（VOICE RULES）\n"
     brief += "\n".join(f"- {r}" for r in voice_rules) + "\n\n"
-    brief += "## TARGET\n"
+    brief += "## 字数目标（TARGET）\n"
     brief += target_note + "\n"
 
     return brief
@@ -441,7 +444,7 @@ def build_eval_brief(ch: int) -> str:
         # Pacing curve note if it mentions this chapter
         pacing = full_eval.get("pacing_curve", {})
         pacing_note = pacing.get("note", "")
-        ch_re = re.compile(rf"\b(?:Chapter|Ch\.?)\s*{ch}\b", re.I)
+        ch_re = re.compile(rf"(?:Chapter|Ch\.?|第)\s*{ch}\s*(?:章)?\b", re.I)
         if ch_re.search(pacing_note):
             problem_parts.append(f"**Pacing note (full eval):** {pacing_note}")
 
@@ -473,16 +476,16 @@ def build_eval_brief(ch: int) -> str:
 
     target_note = f"~{wc} words (current length: {wc}; adjust based on revision scope)"
 
-    brief = f"# Revision Brief: Chapter {ch} — {title} ({brief_type})\n\n"
-    brief += "## PROBLEM\n"
+    brief = f"# 修订 Brief：第 {ch} 章 —— {title}（{brief_type}）\n\n"
+    brief += "## 问题（PROBLEM）\n"
     brief += "\n\n".join(problem_parts) + "\n\n"
-    brief += "## WHAT TO KEEP\n"
+    brief += "## 保留（WHAT TO KEEP）\n"
     brief += "\n".join(keep_parts) + "\n\n"
-    brief += "## WHAT TO CHANGE\n"
+    brief += "## 改动（WHAT TO CHANGE）\n"
     brief += "\n".join(change_parts) + "\n\n"
-    brief += "## VOICE RULES\n"
+    brief += "## 文风规则（VOICE RULES）\n"
     brief += "\n".join(f"- {r}" for r in voice_rules) + "\n\n"
-    brief += "## TARGET\n"
+    brief += "## 字数目标（TARGET）\n"
     brief += target_note + "\n"
 
     return brief
@@ -588,16 +591,16 @@ def build_cuts_brief(ch: int) -> str:
         f"Tighten {fat_pct}% fat without losing the chapter's strongest beats."
     )
 
-    brief = f"# Revision Brief: Chapter {ch} — {title} ({brief_type})\n\n"
-    brief += "## PROBLEM\n"
+    brief = f"# 修订 Brief：第 {ch} 章 —— {title}（{brief_type}）\n\n"
+    brief += "## 问题（PROBLEM）\n"
     brief += "\n".join(problem_parts) + "\n\n"
-    brief += "## WHAT TO KEEP\n"
+    brief += "## 保留（WHAT TO KEEP）\n"
     brief += "\n".join(keep_parts) + "\n\n"
-    brief += "## WHAT TO CHANGE\n"
+    brief += "## 改动（WHAT TO CHANGE）\n"
     brief += "\n".join(change_parts) + "\n\n"
-    brief += "## VOICE RULES\n"
+    brief += "## 文风规则（VOICE RULES）\n"
     brief += "\n".join(f"- {r}" for r in voice_rules) + "\n\n"
-    brief += "## TARGET\n"
+    brief += "## 字数目标（TARGET）\n"
     brief += target_note + "\n"
 
     return brief
@@ -645,7 +648,7 @@ def build_auto_brief() -> tuple[int, str]:
         "foreshadowing_resolution", "world_consistency", "voice_consistency",
         "overall_engagement",
     ]
-    ch_re = re.compile(rf"\b(?:Chapters?|Ch\.?)\s*{ch}\b", re.I)
+    ch_re = re.compile(rf"(?:Chapters?|Ch\.?|第)\s*{ch}\s*(?:章)?\b", re.I)
     for dk in dim_keys:
         dim = full_eval.get(dk, {})
         note = dim.get("note", "")
@@ -769,16 +772,16 @@ def build_auto_brief() -> tuple[int, str]:
 
     target_note = f"~{wc} words (current: {wc}; adjust based on revision scope)"
 
-    brief = f"# Revision Brief: Chapter {ch} — {title} ({brief_type})\n\n"
-    brief += "## PROBLEM\n"
+    brief = f"# 修订 Brief：第 {ch} 章 —— {title}（{brief_type}）\n\n"
+    brief += "## 问题（PROBLEM）\n"
     brief += "\n".join(problem_parts) + "\n\n"
-    brief += "## WHAT TO KEEP\n"
+    brief += "## 保留（WHAT TO KEEP）\n"
     brief += "\n".join(keep_parts) + "\n\n"
-    brief += "## WHAT TO CHANGE\n"
+    brief += "## 改动（WHAT TO CHANGE）\n"
     brief += "\n".join(change_parts) + "\n\n"
-    brief += "## VOICE RULES\n"
+    brief += "## 文风规则（VOICE RULES）\n"
     brief += "\n".join(f"- {r}" for r in voice_rules) + "\n\n"
-    brief += "## TARGET\n"
+    brief += "## 字数目标（TARGET）\n"
     brief += target_note + "\n"
 
     return ch, brief
